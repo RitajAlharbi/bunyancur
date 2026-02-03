@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import '../../../../core/routing/routes.dart';
 import 'dart:async';
-import '../../../../core/extensions/navigation_extensions.dart';
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../roles/presentation/screens/roles_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,21 +16,39 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 2), () {
-      context.pushNamed(Routes.homeScreen);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const RolesScreen()),
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FlutterLogo(size: 100),
-            SizedBox(height: 20),
-            Text("Splash Screen", style: TextStyle(fontSize: 20)),
-          ],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                AppColor.gradientStart,
+                AppColor.gradientEnd,
+              ],
+            ),
+          ),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/icons/Group 22.svg',
+              width: 180,
+              height: 180,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
       ),
     );

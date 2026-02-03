@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
                   RouteSettings(name: Routes.splashScreen),
                 ) ??
                 MaterialPageRoute(builder: (_) => const SizedBox()),
-            initialRoute: Routes.splashScreen,
+            initialRoute: Routes.splash,
           );
         },
       ),

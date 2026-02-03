@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 enum ProductCategory { iron, wood, tile, other }
 
 extension ProductCategoryX on ProductCategory {
@@ -21,7 +19,8 @@ class ProductModel {
   final String id;
   final String title;
   final String sellerName;
-  final int price;
+  final double price;
+  final double rating;
   final String imageUrl;
   final ProductCategory category;
   final bool isFavorite;
@@ -31,6 +30,7 @@ class ProductModel {
     required this.title,
     required this.sellerName,
     required this.price,
+    required this.rating,
     required this.imageUrl,
     required this.category,
     required this.isFavorite,
@@ -40,7 +40,8 @@ class ProductModel {
     String? id,
     String? title,
     String? sellerName,
-    int? price,
+    double? price,
+    double? rating,
     String? imageUrl,
     ProductCategory? category,
     bool? isFavorite,
@@ -50,6 +51,7 @@ class ProductModel {
       title: title ?? this.title,
       sellerName: sellerName ?? this.sellerName,
       price: price ?? this.price,
+      rating: rating ?? this.rating,
       imageUrl: imageUrl ?? this.imageUrl,
       category: category ?? this.category,
       isFavorite: isFavorite ?? this.isFavorite,

@@ -16,4 +16,7 @@ class AppColor {
  static const Color grey500 = Color(0xff9E9E9E);
  static const Color grey600 = Color(0xff757575);
  static const Color grey700 = Color(0xff616161);
+
+ static const Color gradientStart = Color(0x4DFFDCC2);
+ static const Color gradientEnd = Color(0xFFFFFFFF);
 }

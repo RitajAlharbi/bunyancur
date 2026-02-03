@@ -17,6 +17,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final priceText = _formatPrice(product.price);
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -78,7 +79,7 @@ class ProductCard extends StatelessWidget {
                   textDirection: TextDirection.ltr,
                   children: [
                     Text(
-                      '${product.price} ريال',
+                      '$priceText ريال',
                       style: AppTextStyles.price,
                     ),
                     const Spacer(),
@@ -104,5 +105,12 @@ class ProductCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatPrice(double price) {
+    if (price == price.roundToDouble()) {
+      return price.toStringAsFixed(0);
+    }
+    return price.toStringAsFixed(2);
   }
 }

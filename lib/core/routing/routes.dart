@@ -1,4 +1,7 @@
 class Routes {
+ static const String splash = '/splash';
+ static const String roles = '/roles';
+
  static const String splashScreen = '/splashScreen';
  static const String onBoardingScreen = '/onBoardingScreen';
  static const String loginScreen = '/loginScreen';

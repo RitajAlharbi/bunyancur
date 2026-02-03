@@ -1,18 +1,6 @@
 Bunyan Team
 
 
-
-
-# bunyanapp
-
-
-🚀 Clean Architecture Flutter Project Generated Automatically
-
-
-## Structure
-
-
-```
 lib/
 ├── core/
 │   ├── constants
@@ -34,18 +22,3 @@ lib/
 └── app_bloc_observer.dart
 ```
 
-
-## Getting Started
-```bash
-flutter pub get
-flutter run
-```
-
-
----
-
-
-✅ Built with ❤️ using the Clean Architecture Generator
-
-
-Bunyan Team
