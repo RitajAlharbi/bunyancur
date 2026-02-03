@@ -1,0 +1,51 @@
+name: bunyanapp
+description: A new Flutter project with Clean Architecture by Bunyan Team
+# Flutter version on machine: 3.35.6
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc:
+  dio:
+  shared_preferences:
+  easy_localization:
+  intl:
+  equatable:
+  get_it:
+  cached_network_image:
+  flutter_screenutil:
+  flutter_animate:
+  freezed_annotation:
+  json_annotation:
+  flutter_native_splash:
+  animate_do:
+  lottie:
+  google_fonts:
+  flutter_launcher_icons:
+  animator:
+  dartz:
+  flutter_svg:
+  cupertino_icons:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner:
+  freezed:
+  json_serializable:
+  bloc_test:
+  mockito:
+  flutter_lints:
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    #- assets/lottie/
+    - assets/lang/
