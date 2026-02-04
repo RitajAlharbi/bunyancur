@@ -10,6 +10,7 @@ import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_radio_option.dart';
 import '../widgets/create_project_section_label.dart';
 import '../widgets/create_project_text_field.dart';
+import 'create_project_location_screen.dart';
 
 class CreateProjectScreen extends StatefulWidget {
   const CreateProjectScreen({super.key});
@@ -126,7 +127,16 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                     SizedBox(height: 24.h),
                     CreateProjectPrimaryButton(
                       label: 'التالي',
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => CreateProjectLocationScreen(
+                              controller: controller,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

@@ -49,4 +49,22 @@ class CreateProjectController extends ChangeNotifier {
     _data = _data.copyWith(projectDescription: value);
     notifyListeners();
   }
+
+  void updateAddress(String value) {
+    if (_data.address == value) return;
+    _data = _data.copyWith(address: value);
+    notifyListeners();
+  }
+
+  void updateCity(String value) {
+    if (_data.city == value) return;
+    _data = _data.copyWith(city: value);
+    notifyListeners();
+  }
+
+  void updateDistrict(String value) {
+    if (_data.district == value) return;
+    _data = _data.copyWith(district: value);
+    notifyListeners();
+  }
 }

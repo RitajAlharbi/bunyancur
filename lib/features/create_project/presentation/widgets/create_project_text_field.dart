@@ -9,6 +9,7 @@ class CreateProjectTextField extends StatelessWidget {
   final int minLines;
   final int maxLines;
   final ValueChanged<String> onChanged;
+  final IconData? prefixIcon;
 
   const CreateProjectTextField({
     super.key,
@@ -17,6 +18,7 @@ class CreateProjectTextField extends StatelessWidget {
     required this.onChanged,
     this.minLines = 1,
     this.maxLines = 1,
+    this.prefixIcon,
   });
 
   @override
@@ -33,6 +35,9 @@ class CreateProjectTextField extends StatelessWidget {
         hintStyle: AppTextStyles.body.copyWith(color: AppColor.grey400),
         filled: true,
         fillColor: AppColor.grey100,
+        prefixIcon: prefixIcon == null
+            ? null
+            : Icon(prefixIcon, color: AppColor.grey500, size: 20.sp),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16.r),
           borderSide: BorderSide(color: AppColor.grey200),
