@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
+import '../../../create_project/presentation/screens/create_project_screen.dart';
 import '../../../market/views/market_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -200,6 +201,14 @@ class HomeScreen extends StatelessWidget {
                       child: _ServiceCard(
                         title: 'إنشاء طلب مقاول',
                         imageUrl: 'assets/images/service2.png',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const CreateProjectScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -326,76 +335,84 @@ class HomeScreen extends StatelessWidget {
 class _ServiceCard extends StatelessWidget {
   final String title;
   final String imageUrl;
+  final VoidCallback? onTap;
 
   const _ServiceCard({
     required this.title,
     required this.imageUrl,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 192.h,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(24.r),
-            child: Image.asset(
-              imageUrl,
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: AppColor.grey200,
-                  child:
-                      Icon(Icons.image, size: 48.sp, color: AppColor.grey400),
-                );
-              },
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 192.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-          ),
-          // Gradient Overlay
-          Container(
-            decoration: BoxDecoration(
+          ],
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
               borderRadius: BorderRadius.circular(24.r),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.3),
-                  Colors.black.withValues(alpha: 0.7),
-                ],
-                stops: const [0.0, 0.5, 1.0],
+              child: Image.asset(
+                imageUrl,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppColor.grey200,
+                    child: Icon(
+                      Icons.image,
+                      size: 48.sp,
+                      color: AppColor.grey400,
+                    ),
+                  );
+                },
               ),
             ),
-          ),
-          // Title
-          Positioned(
-            bottom: 16.h,
-            left: 18.w,
-            right: 18.w,
-            child: Text(
-              textAlign: TextAlign.right,
-              title,
-              style: GoogleFonts.cairo(
-                fontSize: 12.sp,
-                color: Colors.white,
+            // Gradient Overlay
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.7),
+                  ],
+                  stops: const [0.0, 0.5, 1.0],
+                ),
               ),
             ),
-          ),
-        ],
+            // Title
+            Positioned(
+              bottom: 16.h,
+              left: 18.w,
+              right: 18.w,
+              child: Text(
+                textAlign: TextAlign.right,
+                title,
+                style: GoogleFonts.cairo(
+                  fontSize: 12.sp,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
