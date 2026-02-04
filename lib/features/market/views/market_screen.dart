@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_bottom_nav.dart';
 import '../../home/presentation/screens/home_screen.dart';
+import '../../projects/available_projects/view/available_projects_page.dart';
 import '../controllers/market_controller.dart';
 import '../models/product_model.dart';
 import '../widgets/category_chip.dart';
@@ -273,6 +274,13 @@ class _MarketScreenState extends State<MarketScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
+            } else if (index == 1) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AvailableProjectsPage(),
+                ),
               );
             } else if (index == 2) {
               Navigator.pushReplacement(
