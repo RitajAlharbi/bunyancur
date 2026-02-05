@@ -5,9 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_bottom_nav.dart';
-import '../../home/presentation/screens/home_screen.dart';
+import '../../../core/routing/routes.dart';
 import '../controllers/market_controller.dart';
 import '../models/product_model.dart';
+import '../product_details/models/product_details_model.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/product_card.dart';
 
@@ -31,6 +32,26 @@ class _MarketScreenState extends State<MarketScreen> {
   void dispose() {
     controller.dispose();
     super.dispose();
+  }
+
+  void _openProductDetails(ProductModel product) {
+    Navigator.pushNamed(
+      context,
+      Routes.productDetails,
+      arguments: ProductDetailsModel(
+        title: product.title,
+        categoryLabel: product.category.labelAr,
+        description:
+            'سقالات كورية متكاملة بجودة عالية وسهولة في التركيب، مناسبة لجميع أنواع المشاريع الإنشائية.',
+        quantityLabel: '10 قطع',
+        city: 'الرياض',
+        priceLabel: '${product.price.toStringAsFixed(0)} ريال',
+        imageUrl: product.imageUrl,
+        sellerName: product.sellerName,
+        sellerRole: 'مقاول معتمد',
+        sellerAvatar: 'assets/icons/avatar.png',
+      ),
+    );
   }
 
   void _openFilterSheet(BuildContext context) {
@@ -262,23 +283,31 @@ class _MarketScreenState extends State<MarketScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, Routes.addProduct);
+          },
           backgroundColor: AppColor.orange900,
           child: Icon(Icons.add, color: Colors.white, size: 28.sp),
         ),
         bottomNavigationBar: AppBottomNav(
           currentIndex: 2,
           onTap: (index) {
+            if (index == 2) return;
             if (index == 0) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const HomeScreen()),
-              );
-            } else if (index == 2) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const MarketScreen()),
-              );
+              Navigator.pushReplacementNamed(context, Routes.homeScreen);
+              return;
+            }
+            if (index == 3) {
+              Navigator.pushReplacementNamed(context, Routes.messagesScreen);
+              return;
+            }
+            if (index == 1) {
+              // TODO: OrdersScreen route
+              return;
+            }
+            if (index == 4) {
+              // TODO: ProfileScreen route
+              return;
             }
           },
         ),
@@ -417,10 +446,13 @@ class _MarketScreenState extends State<MarketScreen> {
                         ),
                         itemBuilder: (context, index) {
                           final product = controller.filteredProducts[index];
-                          return ProductCard(
-                            product: product,
-                            onFavoriteTap: () =>
-                                controller.toggleFavorite(product.id),
+                          return GestureDetector(
+                            onTap: () => _openProductDetails(product),
+                            child: ProductCard(
+                              product: product,
+                              onFavoriteTap: () =>
+                                  controller.toggleFavorite(product.id),
+                            ),
                           );
                         },
                       ),
