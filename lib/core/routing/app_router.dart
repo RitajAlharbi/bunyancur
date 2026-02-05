@@ -4,6 +4,7 @@ import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/roles/presentation/screens/roles_screen.dart';
+import '../../features/contractor/view/contractor_home_view.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -18,6 +19,8 @@ class AppRouter {
         return _createRoute(const OnboardingScreen());
       case Routes.homeScreen:
         return _createRoute(const HomeScreen());
+      case Routes.contractorHomeView:
+        return _createRoute(const ContractorHomeView());
 
       default:
         return null;

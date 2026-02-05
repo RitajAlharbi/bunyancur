@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../theme/app_colors.dart';
 
 class AppBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -16,6 +14,10 @@ class AppBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final shadowColor = theme.shadowColor.withOpacity(0.05);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: SafeArea(
@@ -23,14 +25,14 @@ class AppBottomNav extends StatelessWidget {
         child: Container(
           height: 70.h,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(24.r),
               topRight: Radius.circular(24.r),
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: shadowColor,
                 blurRadius: 10,
                 offset: const Offset(0, -2),
               ),
@@ -98,6 +100,16 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final baseIconColor =
+        theme.iconTheme.color ?? colorScheme.onSurface.withOpacity(0.6);
+    final inactiveColor = baseIconColor.withOpacity(0.6);
+    final activeColor = colorScheme.primary;
+    final textStyle = theme.textTheme.labelSmall ??
+        theme.textTheme.bodySmall ??
+        const TextStyle(fontSize: 10);
+
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -108,17 +120,16 @@ class _NavItem extends StatelessWidget {
             width: 24.w,
             height: 24.h,
             colorFilter: ColorFilter.mode(
-              isActive ? AppColor.orange900 : AppColor.grey500,
+              isActive ? activeColor : inactiveColor,
               BlendMode.srcIn,
             ),
           ),
           SizedBox(height: 4.h),
           Text(
             label,
-            style: GoogleFonts.cairo(
-              fontSize: 10.sp,
+            style: textStyle.copyWith(
               fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-              color: isActive ? AppColor.orange900 : AppColor.grey500,
+              color: isActive ? activeColor : inactiveColor,
             ),
           ),
         ],
