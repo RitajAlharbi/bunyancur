@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../create_project/presentation/screens/create_project_screen.dart';
-import '../../../market/views/market_screen.dart';
+import '../../../../core/routing/routes.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -314,16 +314,22 @@ class HomeScreen extends StatelessWidget {
       bottomNavigationBar: AppBottomNav(
         currentIndex: 0,
         onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-            );
-          } else if (index == 2) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const MarketScreen()),
-            );
+          if (index == 0) return;
+          if (index == 2) {
+            Navigator.pushReplacementNamed(context, Routes.marketScreen);
+            return;
+          }
+          if (index == 3) {
+            Navigator.pushReplacementNamed(context, Routes.messagesScreen);
+            return;
+          }
+          if (index == 1) {
+            // TODO: OrdersScreen route
+            return;
+          }
+          if (index == 4) {
+            // TODO: ProfileScreen route
+            return;
           }
         },
       ),

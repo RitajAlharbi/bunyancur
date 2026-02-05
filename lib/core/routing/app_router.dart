@@ -4,6 +4,16 @@ import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/roles/presentation/screens/roles_screen.dart';
+import '../../features/messages/views/messages_screen.dart';
+import '../../features/messages/views/chat_screen.dart';
+import '../../features/market/views/market_screen.dart';
+import '../../features/market/add_product/views/add_product_screen.dart';
+import '../../features/market/add_product/views/product_added_success_screen.dart';
+import '../../features/market/add_product/models/product_form_model.dart';
+import '../../features/market/product_details/views/product_details_screen.dart';
+import '../../features/market/product_details/models/product_details_model.dart';
+import '../../features/market/purchase_product/views/purchase_product_screen.dart';
+import '../../features/market/purchase_product/models/purchase_product_model.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -18,6 +28,24 @@ class AppRouter {
         return _createRoute(const OnboardingScreen());
       case Routes.homeScreen:
         return _createRoute(const HomeScreen());
+      case Routes.marketScreen:
+        return _createRoute(const MarketScreen());
+      case Routes.addProduct:
+        return _createRoute(const AddProductScreen());
+      case Routes.productAddedSuccess:
+        final form = settings.arguments as ProductFormModel?;
+        return _createRoute(ProductAddedSuccessScreen(form: form));
+      case Routes.productDetails:
+        final product = settings.arguments as ProductDetailsModel?;
+        return _createRoute(ProductDetailsScreen(product: product));
+      case Routes.purchaseProduct:
+        final product = settings.arguments as PurchaseProductModel;
+        return _createRoute(PurchaseProductScreen(product: product));
+      case Routes.messagesScreen:
+        return _createRoute(const MessagesScreen());
+      case Routes.chatScreen:
+        final threadId = settings.arguments as String? ?? '';
+        return _createRoute(ChatScreen(threadId: threadId));
 
       default:
         return null;
