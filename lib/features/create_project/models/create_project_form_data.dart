@@ -6,6 +6,11 @@ class CreateProjectFormData {
   final String address;
   final String city;
   final String district;
+  final double? latitude;
+  final double? longitude;
+  final String? budgetRange;
+  final String? timeline;
+  final int? customBudgetAmount;
 
   const CreateProjectFormData({
     this.projectName = '',
@@ -15,6 +20,11 @@ class CreateProjectFormData {
     this.address = '',
     this.city = '',
     this.district = '',
+    this.latitude,
+    this.longitude,
+    this.budgetRange,
+    this.timeline,
+    this.customBudgetAmount,
   });
 
   CreateProjectFormData copyWith({
@@ -25,6 +35,11 @@ class CreateProjectFormData {
     String? address,
     String? city,
     String? district,
+    double? latitude,
+    double? longitude,
+    String? budgetRange,
+    String? timeline,
+    int? customBudgetAmount,
   }) {
     return CreateProjectFormData(
       projectName: projectName ?? this.projectName,
@@ -34,6 +49,11 @@ class CreateProjectFormData {
       address: address ?? this.address,
       city: city ?? this.city,
       district: district ?? this.district,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
+      budgetRange: budgetRange ?? this.budgetRange,
+      timeline: timeline ?? this.timeline,
+      customBudgetAmount: customBudgetAmount ?? this.customBudgetAmount,
     );
   }
 }

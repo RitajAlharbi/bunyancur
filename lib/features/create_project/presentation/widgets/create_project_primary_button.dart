@@ -5,7 +5,7 @@ import '../../../../core/theme/app_text_styles.dart';
 
 class CreateProjectPrimaryButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CreateProjectPrimaryButton({
     super.key,
@@ -21,6 +21,9 @@ class CreateProjectPrimaryButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.orange900,
+          disabledBackgroundColor: AppColor.grey200,
+          disabledForegroundColor: AppColor.grey500,
+          foregroundColor: AppColor.white,
           padding: EdgeInsets.symmetric(vertical: 16.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
@@ -28,10 +31,7 @@ class CreateProjectPrimaryButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: AppTextStyles.body.copyWith(
-            color: AppColor.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.body.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );

@@ -28,8 +28,10 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
   void initState() {
     super.initState();
     controller = CreateProjectController();
-    nameController = TextEditingController();
-    descriptionController = TextEditingController();
+    nameController =
+        TextEditingController(text: controller.data.projectName);
+    descriptionController =
+        TextEditingController(text: controller.data.projectDescription);
   }
 
   @override
@@ -63,7 +65,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                     CreateProjectHeader(title: 'إنشاء مشروع جديد'),
                     SizedBox(height: 12.h),
                     const CreateProjectProgressIndicator(
-                      totalSteps: 3,
+                      totalSteps: 4,
                       currentStep: 1,
                     ),
                     SizedBox(height: 20.h),
@@ -90,7 +92,10 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                       onChanged: controller.updateProjectName,
                     ),
                     SizedBox(height: 16.h),
-                    const CreateProjectSectionLabel(text: 'نوع مشروعك'),
+                    const CreateProjectSectionLabel(
+                      text: 'نوع مشروعك',
+                      isRequired: true,
+                    ),
                     SizedBox(height: 8.h),
                     CreateProjectDropdownField(
                       hintText: 'اختر نوع مشروعك',
@@ -127,16 +132,18 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                     SizedBox(height: 24.h),
                     CreateProjectPrimaryButton(
                       label: 'التالي',
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => CreateProjectLocationScreen(
-                              controller: controller,
-                            ),
-                          ),
-                        );
-                      },
+                      onPressed: controller.isStep1Valid
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => CreateProjectLocationScreen(
+                                    controller: controller,
+                                  ),
+                                ),
+                              );
+                            }
+                          : null,
                     ),
                   ],
                 ),

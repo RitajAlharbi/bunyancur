@@ -4,13 +4,14 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../controllers/create_project_controller.dart';
 import '../widgets/create_project_header.dart';
-import '../widgets/create_project_map_placeholder.dart';
+import '../widgets/create_project_map_picker.dart';
 import '../widgets/create_project_primary_button.dart';
 import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_section_label.dart';
 import '../widgets/create_project_secondary_button.dart';
 import '../widgets/create_project_text_field.dart';
-import 'create_project_step3_screen.dart';
+import 'create_project_location_map_screen.dart';
+import 'create_project_budget_timeline_screen.dart';
 
 class CreateProjectLocationScreen extends StatefulWidget {
   final CreateProjectController controller;
@@ -30,6 +31,7 @@ class _CreateProjectLocationScreenState
   late final TextEditingController addressController;
   late final TextEditingController cityController;
   late final TextEditingController districtController;
+  bool _isSyncingText = false;
 
   @override
   void initState() {
@@ -37,14 +39,45 @@ class _CreateProjectLocationScreenState
     addressController = TextEditingController(text: widget.controller.data.address);
     cityController = TextEditingController(text: widget.controller.data.city);
     districtController = TextEditingController(text: widget.controller.data.district);
+    widget.controller.addListener(_handleControllerUpdate);
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_handleControllerUpdate);
     addressController.dispose();
     cityController.dispose();
     districtController.dispose();
     super.dispose();
+  }
+
+  void _handleControllerUpdate() {
+    _syncTextController(addressController, widget.controller.data.address);
+    _syncTextController(cityController, widget.controller.data.city);
+    _syncTextController(districtController, widget.controller.data.district);
+  }
+
+  void _syncTextController(TextEditingController controller, String value) {
+    if (controller.text == value) return;
+    _isSyncingText = true;
+    controller.value = controller.value.copyWith(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
+    );
+    _isSyncingText = false;
+  }
+
+  Future<void> _handleOpenMap() async {
+    final canOpenMap = await widget.controller.initializeLocation();
+    if (!mounted || !canOpenMap) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CreateProjectLocationMapScreen(
+          controller: widget.controller,
+        ),
+      ),
+    );
   }
 
   @override
@@ -70,7 +103,7 @@ class _CreateProjectLocationScreenState
                     const CreateProjectHeader(title: 'إنشاء مشروع جديد'),
                     SizedBox(height: 12.h),
                     const CreateProjectProgressIndicator(
-                      totalSteps: 3,
+                      totalSteps: 4,
                       currentStep: 2,
                     ),
                     SizedBox(height: 20.h),
@@ -94,8 +127,12 @@ class _CreateProjectLocationScreenState
                     CreateProjectTextField(
                       controller: addressController,
                       hintText: 'مثال: الخرج، حي النخيل، شارع التخصصي',
-                      onChanged: widget.controller.updateAddress,
+                      onChanged: (value) {
+                        if (_isSyncingText) return;
+                        widget.controller.updateAddress(value);
+                      },
                       prefixIcon: Icons.location_on_outlined,
+                      onPrefixIconTap: _handleOpenMap,
                     ),
                     SizedBox(height: 16.h),
                     const CreateProjectSectionLabel(text: 'المدينة'),
@@ -103,7 +140,10 @@ class _CreateProjectLocationScreenState
                     CreateProjectTextField(
                       controller: cityController,
                       hintText: 'الخرج',
-                      onChanged: widget.controller.updateCity,
+                      onChanged: (value) {
+                        if (_isSyncingText) return;
+                        widget.controller.updateCity(value);
+                      },
                     ),
                     SizedBox(height: 16.h),
                     const CreateProjectSectionLabel(text: 'الحي'),
@@ -111,12 +151,27 @@ class _CreateProjectLocationScreenState
                     CreateProjectTextField(
                       controller: districtController,
                       hintText: 'النخيل',
-                      onChanged: widget.controller.updateDistrict,
+                      onChanged: (value) {
+                        if (_isSyncingText) return;
+                        widget.controller.updateDistrict(value);
+                      },
                     ),
                     SizedBox(height: 20.h),
                     const CreateProjectSectionLabel(text: 'حدد الموقع على الخريطة'),
                     SizedBox(height: 10.h),
-                    const CreateProjectMapPlaceholder(),
+                    CreateProjectMapPicker(
+                      controller: widget.controller,
+                      onTap: _handleOpenMap,
+                    ),
+                    if (widget.controller.locationError != null) ...[
+                      SizedBox(height: 8.h),
+                      Text(
+                        widget.controller.locationError!,
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.caption12
+                            .copyWith(color: AppColor.orange900),
+                      ),
+                    ],
                     SizedBox(height: 10.h),
                     Text(
                       'سيساعد تحديد الموقع بدقة المقاولين في تقديم عروض أفضل',
@@ -136,14 +191,19 @@ class _CreateProjectLocationScreenState
                         Expanded(
                           child: CreateProjectPrimaryButton(
                             label: 'التالي',
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const CreateProjectStep3Screen(),
-                                ),
-                              );
-                            },
+                            onPressed: widget.controller.hasSelectedLocation
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            CreateProjectBudgetTimelineScreen(
+                                          controller: widget.controller,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                : null,
                           ),
                         ),
                       ],
