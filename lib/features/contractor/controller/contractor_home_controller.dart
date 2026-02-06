@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/routing/routes.dart';
 import '../model/contractor_project_model.dart';
 
 class ContractorHomeController extends ChangeNotifier {
@@ -15,13 +16,31 @@ class ContractorHomeController extends ChangeNotifier {
   List<ContractorProjectModel> get availableProjects =>
       List.unmodifiable(_availableProjects);
 
-  int _selectedBottomIndex = 0;
-  int get selectedBottomIndex => _selectedBottomIndex;
+  int _selectedBottomNavIndex = 0;
+  int get selectedBottomNavIndex => _selectedBottomNavIndex;
 
-  void onBottomNavTap(int index) {
-    if (_selectedBottomIndex == index) return;
-    _selectedBottomIndex = index;
+  void onBottomNavTap(int index, BuildContext context) {
+    if (_selectedBottomNavIndex == index) return;
+    _selectedBottomNavIndex = index;
     notifyListeners();
+    _navigateFromBottomNav(index, context);
+  }
+
+  void _navigateFromBottomNav(int index, BuildContext context) {
+    final navigator = Navigator.of(context);
+    switch (index) {
+      case 0:
+        // Already on Contractor Home (الرئيسية)
+        break;
+      case 1:
+        navigator.pushReplacementNamed(Routes.projectsScreen);
+        break;
+      case 2:
+      case 3:
+      case 4:
+        // Placeholder: stay or navigate when those screens exist
+        break;
+    }
   }
 
   void _loadMockData() {

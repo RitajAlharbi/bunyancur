@@ -19,4 +19,13 @@ class AppColor {
 
  static const Color gradientStart = Color(0x4DFFDCC2);
  static const Color gradientEnd = Color(0xFFFFFFFF);
+
+ // Current Projects design – status & chart (soft pastel colors)
+ static const Color statusCompletedBg = Color(0xFFE8F5E9); // Light green
+ static const Color statusCompletedText = Color(0xFF2E7D32); // Dark green
+ static const Color statusInProgressBg = Color(0xFFE3F2FD); // Light blue
+ static const Color statusInProgressText = Color(0xFF1565C0); // Dark blue
+ static const Color statusPendingBg = Color(0xFFFFF8E1); // Light yellow
+ static const Color statusPendingText = Color(0xFF8B5E3C); // Brown/gold
+ static const Color accentBrown = Color(0xFF8B5E3C);
 }

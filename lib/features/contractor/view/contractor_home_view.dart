@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/routing/routes.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/app_bottom_nav.dart';
+import '../../projects/widgets/projects_bottom_nav.dart';
 import '../controller/contractor_home_controller.dart';
 import '../model/contractor_project_model.dart';
 
@@ -55,8 +56,10 @@ class _ContractorHomeBody extends StatelessWidget {
                           SizedBox(height: 24.h),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: const _SectionHeader(
+                            child: _SectionHeader(
                               title: 'مشاريعي الحالية',
+                              onTap: () => Navigator.of(context)
+                                  .pushNamed(Routes.projectsScreen),
                             ),
                           ),
                           SizedBox(height: 16.h),
@@ -81,9 +84,9 @@ class _ContractorHomeBody extends StatelessWidget {
                       ),
                     ),
                   ),
-                  AppBottomNav(
-                    currentIndex: controller.selectedBottomIndex,
-                    onTap: controller.onBottomNavTap,
+                  ProjectsBottomNav(
+                    currentIndex: controller.selectedBottomNavIndex,
+                    onTap: (i) => controller.onBottomNavTap(i, context),
                   ),
                 ],
               );
@@ -303,16 +306,18 @@ class _SearchBar extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String title;
+  final VoidCallback? onTap;
 
   const _SectionHeader({
     required this.title,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final titleFontSize = title == 'المشاريع المتاحة' ? 20.sp : 18.sp;
 
-    return Row(
+    final content = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -339,6 +344,15 @@ class _SectionHeader extends StatelessWidget {
         ),
       ],
     );
+
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: content,
+      );
+    }
+    return content;
   }
 }
 
