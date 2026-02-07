@@ -69,8 +69,10 @@ class _ContractorHomeBody extends StatelessWidget {
                           SizedBox(height: 32.h),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: const _SectionHeader(
+                            child: _SectionHeader(
                               title: 'المشاريع المتاحة',
+                              onTap: () => Navigator.of(context)
+                                  .pushNamed(Routes.availableProjectsScreen),
                             ),
                           ),
                           SizedBox(height: 16.h),

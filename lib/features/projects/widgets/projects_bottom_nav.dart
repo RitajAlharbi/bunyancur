@@ -7,11 +7,13 @@ import '../../../core/theme/app_colors.dart';
 class ProjectsBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final Color? activeColor;
 
   const ProjectsBottomNav({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.activeColor,
   });
 
   static const _items = [
@@ -41,10 +43,11 @@ class ProjectsBottomNav extends StatelessWidget {
             children: List.generate(
               _items.length,
               (index) => Expanded(
-                child: _NavItem(
+                child:               _NavItem(
                   iconPath: _items[index].$1,
                   label: _items[index].$2,
                   isActive: currentIndex == index,
+                  activeColor: activeColor ?? AppColor.orange900,
                   onTap: () => onTap(index),
                 ),
               ),
@@ -60,18 +63,19 @@ class _NavItem extends StatelessWidget {
   final String iconPath;
   final String label;
   final bool isActive;
+  final Color activeColor;
   final VoidCallback onTap;
 
   const _NavItem({
     required this.iconPath,
     required this.label,
     required this.isActive,
+    required this.activeColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = AppColor.orange900;
     final inactiveColor = AppColor.grey600;
 
     return GestureDetector(

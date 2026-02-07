@@ -6,6 +6,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/roles/presentation/screens/roles_screen.dart';
 import '../../features/contractor/view/contractor_home_view.dart';
 import '../../features/projects/view/projects_screen.dart';
+import '../../features/projects/view/available_projects_screen.dart';
 import '../../features/projects/model/project_status.dart';
 
 class AppRouter {
@@ -30,6 +31,8 @@ class AppRouter {
             : null;
         return _createRoute(ProjectsScreen(initialFilter: initialFilter));
       }
+      case Routes.availableProjectsScreen:
+        return _createRoute(const AvailableProjectsScreen());
 
       default:
         return null;

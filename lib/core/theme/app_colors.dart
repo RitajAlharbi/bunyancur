@@ -28,4 +28,10 @@ class AppColor {
  static const Color statusPendingBg = Color(0xFFFFF8E1); // Light yellow
  static const Color statusPendingText = Color(0xFF8B5E3C); // Brown/gold
  static const Color accentBrown = Color(0xFF8B5E3C);
+
+ // Available Projects screen – exact design palette
+ static const Color availableProjectsPrimary = Color(0xFF8B5E3C);
+ static const Color availableProjectsBorder = Color(0xFFBC9E7C);
+ static const Color availableProjectsTitle = Color(0xFF333333);
+ static const Color availableProjectsInactiveText = Color(0xFF888888);
 }
