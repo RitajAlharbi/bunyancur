@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../routing/routes.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/designer/home/view/designer_home_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/roles/presentation/screens/roles_screen.dart';
 
@@ -18,6 +19,8 @@ class AppRouter {
         return _createRoute(const OnboardingScreen());
       case Routes.homeScreen:
         return _createRoute(const HomeScreen());
+      case Routes.designerHomeScreen:
+        return _createRoute(const DesignerHomeScreen());
 
       default:
         return null;

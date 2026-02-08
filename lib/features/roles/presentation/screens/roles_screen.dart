@@ -31,7 +31,11 @@ class _RolesScreenState extends State<RolesScreen> {
 
   void _handleRole(RoleType role) {
     controller.onRoleSelected(role);
-    Navigator.pushReplacementNamed(context, Routes.homeScreen);
+    if (role == RoleType.designer) {
+      Navigator.pushReplacementNamed(context, Routes.designerHomeScreen);
+    } else {
+      Navigator.pushReplacementNamed(context, Routes.homeScreen);
+    }
   }
 
   @override
