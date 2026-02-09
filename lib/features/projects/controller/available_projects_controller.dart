@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/asset_image_paths.dart';
 import '../../../core/routing/routes.dart';
 import '../../../models/project_model.dart';
 import '../model/filter_model.dart';
@@ -68,28 +69,28 @@ class AvailableProjectsController extends ChangeNotifier {
         id: '1',
         title: 'تجديد واجهة محل تجاري',
         clientName: '',
-        imagePath: 'assets/images/projects/تجديد.png',
+        imagePath: AssetImagePaths.projectRenewal,
         status: '',
       ),
       ProjectModel(
         id: '2',
         title: 'ترميم منزل قديم',
         clientName: '',
-        imagePath: 'assets/images/projects/فيلا.png',
+        imagePath: AssetImagePaths.projectVilla,
         status: '',
       ),
       ProjectModel(
         id: '3',
         title: 'ترميم واجهة فيلا قديمة',
         clientName: '',
-        imagePath: 'assets/images/projects/ترميم.png',
+        imagePath: AssetImagePaths.projectRenovation,
         status: '',
       ),
       ProjectModel(
         id: '4',
         title: 'بناء مجلس خارجي',
         clientName: '',
-        imagePath: 'assets/images/projects/مجلس.png',
+        imagePath: AssetImagePaths.projectMajlis,
         status: '',
       ),
     ]);

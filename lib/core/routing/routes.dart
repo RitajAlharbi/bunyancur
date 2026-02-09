@@ -10,4 +10,6 @@ class Routes {
  static const String contractorHomeView = '/contractorHomeView';
  static const String projectsScreen = '/projectsScreen';
  static const String availableProjectsScreen = '/availableProjectsScreen';
+ static const String favoritesScreen = '/favoritesScreen';
+ static const String notificationsScreen = '/notificationsScreen';
 }

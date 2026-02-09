@@ -1,83 +1,111 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../controller/project_details_controller.dart';
 import '../model/current_project_model.dart';
+import '../model/project_details_model.dart';
+import '../model/project_status.dart';
+import '../widgets/projects_bottom_nav.dart';
+import 'widgets/attachments_section.dart';
+import 'widgets/completion_banner.dart';
+import 'widgets/continue_project_button.dart';
+import 'widgets/final_notes_section.dart';
+import 'widgets/hero_image_section.dart';
+import 'widgets/info_notice_banner.dart';
+import 'widgets/map_preview_section.dart';
+import 'widgets/notes_section.dart';
+import 'widgets/pending_approval_banner.dart';
+import 'widgets/project_info_card.dart';
+import 'widgets/rating_section.dart';
 
 class ProjectDetailsScreen extends StatelessWidget {
   final CurrentProjectModel project;
 
   const ProjectDetailsScreen({super.key, required this.project});
 
-  static const routeName = '/projectDetails';
-
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        backgroundColor: AppColor.backgroundColor,
-        appBar: AppBar(
-          backgroundColor: AppColor.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: AppColor.orange900),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            project.title,
-            style: TextStyle(
-              color: AppColor.orange900,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Cairo',
-            ),
-          ),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: project.imagePath.startsWith('http')
-                    ? Image.network(
-                        project.imagePath,
-                        height: 200.h,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _placeholder(),
-                      )
-                    : Image.asset(
-                        project.imagePath,
-                        height: 200.h,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _placeholder(),
+    final detailsModel = ProjectDetailsModel.fromCurrentProject(project);
+    return ChangeNotifierProvider(
+      create: (_) => ProjectDetailsController(project: detailsModel),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF7F7F7),
+          body: SafeArea(
+            child: Consumer<ProjectDetailsController>(
+              builder: (context, controller, _) {
+                final p = controller.project;
+                final isPending = p.status == ProjectStatus.pendingApproval;
+                final isInProgress = p.status == ProjectStatus.inProgress;
+                final isCompleted = p.status == ProjectStatus.completed;
+
+                return Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            HeroImageSection(project: p),
+                            if (isPending) PendingApprovalBanner(),
+                            if (isCompleted) CompletionBanner(project: p),
+                            if (isPending || isInProgress || isCompleted) ...[
+                              SizedBox(height: 16.h),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    ProjectInfoCard(project: p),
+                                    if (isPending) ...[
+                                      SizedBox(height: 20.h),
+                                      InfoNoticeBanner(),
+                                    ],
+                                    if (isPending || isInProgress) ...[
+                                      SizedBox(height: 20.h),
+                                      NotesSection(project: p),
+                                    ],
+                                    if (isCompleted && p.finalNotes.isNotEmpty) ...[
+                                      SizedBox(height: 20.h),
+                                      FinalNotesSection(notes: p.finalNotes),
+                                    ],
+                                    if (isCompleted && p.review != null) ...[
+                                      SizedBox(height: 20.h),
+                                      RatingSection(review: p.review!),
+                                    ],
+                                    SizedBox(height: 20.h),
+                                    AttachmentsSection(attachments: p.attachments),
+                                    SizedBox(height: 20.h),
+                                    MapPreviewSection(
+                                      location: p.mapLocation,
+                                      projectImagePath: p.imagePath,
+                                    ),
+                                    if (isInProgress) ...[
+                                      SizedBox(height: 24.h),
+                                      ContinueProjectButton(onPressed: () {}),
+                                    ] else
+                                      SizedBox(height: 24.h),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-              ),
-              SizedBox(height: 20.h),
-              if (project.clientName.isNotEmpty)
-                Text(
-                  project.clientName,
-                  style: TextStyle(
-                    color: AppColor.grey700,
-                    fontSize: 16.sp,
-                    fontFamily: 'Cairo',
-                  ),
-                ),
-            ],
+                    ),
+                    ProjectsBottomNav(
+                      currentIndex: 1,
+                      onTap: (i) => controller.onBottomNavTap(i, context),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
-
-  Widget _placeholder() => Container(
-        height: 200.h,
-        color: AppColor.grey200,
-        child: Icon(Icons.image_not_supported, color: AppColor.grey400),
-      );
 }

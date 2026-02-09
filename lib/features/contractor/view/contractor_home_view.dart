@@ -174,19 +174,22 @@ class _HeaderSection extends StatelessWidget {
 class _NotificationIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 48.w,
-      height: 48.h,
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: AppColor.white,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColor.orange900,
-          width: 1,
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed(Routes.notificationsScreen),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 48.w,
+        height: 48.h,
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: AppColor.orange900,
+            width: 1,
+          ),
         ),
-      ),
-      child: Stack(
+        child: Stack(
         clipBehavior: Clip.none,
         children: [
           Center(
@@ -213,6 +216,7 @@ class _NotificationIconButton extends StatelessWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -221,19 +225,22 @@ class _NotificationIconButton extends StatelessWidget {
 class _FavoriteIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 48.w,
-      height: 48.h,
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: AppColor.white,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: AppColor.orange900,
-          width: 1,
+    return GestureDetector(
+      onTap: () => Navigator.of(context).pushNamed(Routes.favoritesScreen),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 48.w,
+        height: 48.h,
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: AppColor.white,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: AppColor.orange900,
+            width: 1,
+          ),
         ),
-      ),
-      child: SvgPicture.asset(
+        child: SvgPicture.asset(
         'assets/icons/Heart.svg',
         width: 24.w,
         height: 24.h,
@@ -241,6 +248,7 @@ class _FavoriteIconButton extends StatelessWidget {
           AppColor.orange900,
           BlendMode.srcIn,
         ),
+      ),
       ),
     );
   }

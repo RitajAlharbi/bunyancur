@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/asset_image_paths.dart';
 import '../../../core/routing/routes.dart';
 import '../model/contractor_project_model.dart';
 
@@ -49,14 +50,14 @@ class ContractorHomeController extends ChangeNotifier {
         id: '1',
         title: 'بناء مجلس خارجي',
         clientName: 'العميل: احمد محمد',
-        imagePath: 'assets/images/projects/مجلس.png',
+        imagePath: AssetImagePaths.projectMajlis,
         location: 'الخرج',
       ),
       ContractorProjectModel(
         id: '2',
         title: 'بناء فيلا كاملة',
         clientName: 'العميل: صالح محمد',
-        imagePath: 'assets/images/projects/فيلا.png',
+        imagePath: AssetImagePaths.projectVilla,
         location: 'الخرج',
       ),
     ]);
@@ -66,14 +67,14 @@ class ContractorHomeController extends ChangeNotifier {
         id: '3',
         title: 'تجديد واجهة محل تجاري',
         clientName: '',
-        imagePath: 'assets/images/projects/تجديد.png',
+        imagePath: AssetImagePaths.projectRenewal,
         location: '',
       ),
       ContractorProjectModel(
         id: '4',
         title: 'ترميم جزء من فيلا',
         clientName: '',
-        imagePath: 'assets/images/projects/ترميم.png',
+        imagePath: AssetImagePaths.projectRenovation,
         location: '',
       ),
     ]);

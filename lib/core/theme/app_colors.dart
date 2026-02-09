@@ -29,9 +29,20 @@ class AppColor {
  static const Color statusPendingText = Color(0xFF8B5E3C); // Brown/gold
  static const Color accentBrown = Color(0xFF8B5E3C);
 
+ // Project details – hero badge & banners (pixel-perfect)
+ static const Color heroBadgePendingBg = Color(0xFFFFF8E1); // Creamy beige / light peach for Pending Approval
+ static const Color heroBadgePendingText = Color(0xFF6D4C41); // Medium-dark brown text on pending badge
+ static const Color heroBadgeInProgressBg = Color(0xFF1565C0); // Blue for In Progress
+ static const Color statusBannerPendingBg = Color(0xFFFFF3E0); // Light orange banner
+ static const Color statusBannerPendingText = Color(0xFFE65100);
+ static const Color infoBannerBg = Color(0xFFE3F2FD);
+ static const Color infoBannerText = Color(0xFF1565C0);
+ static const Color notesContainerInProgressBg = Color(0xFFE8EAF6); // Light blue/grey notes
+
  // Available Projects screen – exact design palette
  static const Color availableProjectsPrimary = Color(0xFF8B5E3C);
  static const Color availableProjectsBorder = Color(0xFFBC9E7C);
  static const Color availableProjectsTitle = Color(0xFF333333);
  static const Color availableProjectsInactiveText = Color(0xFF888888);
+
 }

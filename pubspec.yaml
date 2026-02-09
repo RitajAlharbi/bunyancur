@@ -31,6 +31,7 @@ dependencies:
   dartz:
   flutter_svg:
   cupertino_icons:
+  google_maps_flutter:
 
 dev_dependencies:
   flutter_test:
@@ -46,6 +47,10 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
+    - assets/images/
     - assets/images/projects/
+    - assets/images/الصفحة الرئيسه/
+    - assets/images/الصفحة الرئيسه/الصفحة الرئيسه/
+    - assets/images/تقديم عرض/
     - assets/icons/
     - assets/lang/

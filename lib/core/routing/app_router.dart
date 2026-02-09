@@ -8,6 +8,8 @@ import '../../features/contractor/view/contractor_home_view.dart';
 import '../../features/projects/view/projects_screen.dart';
 import '../../features/projects/view/available_projects_screen.dart';
 import '../../features/projects/model/project_status.dart';
+import '../../features/favorites/view/favorites_screen.dart';
+import '../../features/notifications/view/notifications_screen.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -33,6 +35,10 @@ class AppRouter {
       }
       case Routes.availableProjectsScreen:
         return _createRoute(const AvailableProjectsScreen());
+      case Routes.favoritesScreen:
+        return _createRoute(const FavoritesScreen());
+      case Routes.notificationsScreen:
+        return _createRoute(const NotificationsScreen());
 
       default:
         return null;

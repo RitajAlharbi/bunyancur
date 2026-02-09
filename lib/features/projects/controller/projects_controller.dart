@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/asset_image_paths.dart';
 import '../../../core/routing/routes.dart';
 import '../model/current_project_model.dart';
 import '../model/project_status.dart';
@@ -77,49 +78,49 @@ class ProjectsController extends ChangeNotifier {
         id: '1',
         title: 'بناء مجلس خارجي',
         clientName: 'العميل: محمد خالد',
-        imagePath: 'assets/images/projects/مجلس.png',
+        imagePath: AssetImagePaths.projectMajlis,
         status: ProjectStatus.completed,
       ),
       CurrentProjectModel(
         id: '2',
         title: 'بناء فيلا كاملة',
         clientName: 'العميل: محمد خالد',
-        imagePath: 'assets/images/projects/فيلا.png',
+        imagePath: AssetImagePaths.projectVillaDisplay,
         status: ProjectStatus.completed,
       ),
       CurrentProjectModel(
         id: '3',
         title: 'ترميم واجهة فيلا',
         clientName: 'العميل: سعد محمد',
-        imagePath: 'assets/images/projects/ترميم.png',
+        imagePath: AssetImagePaths.projectRenovation,
         status: ProjectStatus.inProgress,
       ),
       CurrentProjectModel(
         id: '4',
         title: 'بناء عظم فيلا',
         clientName: 'العميل: محمد خالد',
-        imagePath: 'assets/images/projects/تجديد.png',
+        imagePath: AssetImagePaths.projectAdem,
         status: ProjectStatus.pendingApproval,
       ),
       CurrentProjectModel(
         id: '5',
         title: 'تنفيذ فيلا سكنية',
         clientName: 'العميل: فهد العتيبي',
-        imagePath: 'assets/images/projects/فيلا.png',
+        imagePath: AssetImagePaths.projectVillaDisplay,
         status: ProjectStatus.inProgress,
       ),
       CurrentProjectModel(
         id: '6',
         title: 'بيت فيلا كامل',
         clientName: 'العميل: محمد خالد',
-        imagePath: 'assets/images/projects/فيلا.png',
+        imagePath: AssetImagePaths.projectVillaDisplay,
         status: ProjectStatus.pendingApproval,
       ),
       CurrentProjectModel(
         id: '7',
         title: ' بناء مجلس خارجي  ',
         clientName: 'العميل: عبدالرحمن',
-        imagePath: 'assets/images/projects/مجلس.png',
+        imagePath: AssetImagePaths.projectMajlis,
         status: ProjectStatus.inProgress,
       ),
     ]);
