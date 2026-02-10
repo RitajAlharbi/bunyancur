@@ -117,7 +117,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               return;
             }
             if (index == 1) {
-              // TODO: OrdersScreen route
+              Navigator.pushReplacementNamed(context, Routes.clientOrdersScreen);
               return;
             }
             if (index == 4) {
