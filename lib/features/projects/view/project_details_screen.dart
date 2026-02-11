@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../controller/project_details_controller.dart';
 import '../model/current_project_model.dart';
 import '../model/project_details_model.dart';
@@ -32,7 +33,7 @@ class ProjectDetailsScreen extends StatelessWidget {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(0xFFF7F7F7),
+          backgroundColor: AppColor.white,
           body: SafeArea(
             child: Consumer<ProjectDetailsController>(
               builder: (context, controller, _) {

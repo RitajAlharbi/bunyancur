@@ -373,19 +373,22 @@ class _CurrentProjectsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 273.h,
-      child: ListView.separated(
-        padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
-        scrollDirection: Axis.horizontal,
-        reverse: false,
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          final project = projects[index];
-          return _CurrentProjectCard(project: project);
-        },
-        separatorBuilder: (_, __) => SizedBox(width: 16.w),
-        itemCount: projects.length,
+    return Container(
+      color: Colors.white, // خلفية بيضاء صافية خلف بطاقات "مشاريعي الحالية"
+      child: SizedBox(
+        height: 273.h,
+        child: ListView.separated(
+          padding: EdgeInsetsDirectional.symmetric(horizontal: 24.w),
+          scrollDirection: Axis.horizontal,
+          reverse: false,
+          physics: const BouncingScrollPhysics(),
+          itemBuilder: (context, index) {
+            final project = projects[index];
+            return _CurrentProjectCard(project: project);
+          },
+          separatorBuilder: (_, __) => SizedBox(width: 16.w),
+          itemCount: projects.length,
+        ),
       ),
     );
   }
@@ -454,7 +457,7 @@ class _CurrentProjectCard extends StatelessWidget {
     return Container(
       width: 180.w,
       decoration: BoxDecoration(
-        color: AppColor.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(28.r),
         boxShadow: [
           BoxShadow(

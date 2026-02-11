@@ -11,7 +11,7 @@ class SubmitOfferScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: AppColor.white,
         appBar: _buildAppBar(context),
         body: SafeArea(
           child: SingleChildScrollView(

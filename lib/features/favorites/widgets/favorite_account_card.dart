@@ -86,7 +86,7 @@ class FavoriteAccountCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            '${item.rating?.toStringAsFixed(1) ?? ''}',
+                            item.rating?.toStringAsFixed(1) ?? '',
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,

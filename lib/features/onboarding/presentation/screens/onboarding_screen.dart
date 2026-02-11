@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -29,7 +28,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
  @override
  Widget build(BuildContext context) {
    return Scaffold(
-     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+     backgroundColor: AppColor.white,
      body: Padding(
        padding: EdgeInsets.symmetric(horizontal: 24.w),
        child: Column(

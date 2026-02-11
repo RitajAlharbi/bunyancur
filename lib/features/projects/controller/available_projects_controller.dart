@@ -59,39 +59,78 @@ class AvailableProjectsController extends ChangeNotifier {
   }
 
   void onViewDetails(ProjectModel project, BuildContext context) {
-    // Navigate to project details when screen exists
-    Navigator.of(context).pushNamed(Routes.projectsScreen);
+    Navigator.of(context).pushNamed(
+      Routes.contractorProjectDetailsScreen,
+      arguments: project,
+    );
   }
 
   void _loadMockData() {
-    _allProjects.addAll(const [
+    const description = 'عندي فيلا قديمة عمرها أكثر من 15 سنة وأبغى أرممها بالكامل من الداخل والخارج. أحتاج دهان جديد، وتبديل الأرضيات، وتغيير دورات المياه والمطبخ، وتصليح الكهرباء والسباكة لأنها قديمة بعد الترميم أبغى شكل حديث ومرتب يشبه الفلل الجديدة، مع إنارة جميلة وديكورات بسيطة. ما أبي هدم كامل، فقط تحسين وتجديد شامل للفيلا.';
+    _allProjects.addAll([
       ProjectModel(
         id: '1',
         title: 'تجديد واجهة محل تجاري',
-        clientName: '',
+        clientName: 'محمد صالح',
         imagePath: AssetImagePaths.projectRenewal,
         status: '',
+        city: 'الرياض',
+        date: '2025/08/15',
+        projectType: 'تجديد',
+        budget: 'أكثر من 500,000 ريال',
+        area: '200-300',
+        duration: '6 أشهر',
+        description: description,
+        galleryImagePaths: AssetImagePaths.projectImages,
+        mapLocation: null,
       ),
       ProjectModel(
         id: '2',
         title: 'ترميم منزل قديم',
-        clientName: '',
+        clientName: 'محمد صالح',
         imagePath: AssetImagePaths.projectVilla,
         status: '',
+        city: 'الخرج',
+        date: '2025/08/15',
+        projectType: 'بناء كامل',
+        budget: 'أكثر من 500,000 ريال',
+        area: '400-500',
+        duration: 'أكثر من سنة',
+        description: description,
+        galleryImagePaths: AssetImagePaths.projectImages,
+        mapLocation: null,
       ),
       ProjectModel(
         id: '3',
         title: 'ترميم واجهة فيلا قديمة',
-        clientName: '',
+        clientName: 'أحمد محمد',
         imagePath: AssetImagePaths.projectRenovation,
         status: '',
+        city: 'الخرج',
+        date: '2025/07/20',
+        projectType: 'ترميم',
+        budget: '300,000 - 500,000 ريال',
+        area: '300-400',
+        duration: 'سنة',
+        description: description,
+        galleryImagePaths: AssetImagePaths.projectImages,
+        mapLocation: null,
       ),
       ProjectModel(
         id: '4',
         title: 'بناء مجلس خارجي',
-        clientName: '',
+        clientName: 'صالح العتيبي',
         imagePath: AssetImagePaths.projectMajlis,
         status: '',
+        city: 'الرياض',
+        date: '2025/09/01',
+        projectType: 'بناء',
+        budget: 'أكثر من 500,000 ريال',
+        area: '150-200',
+        duration: '8 أشهر',
+        description: description,
+        galleryImagePaths: AssetImagePaths.projectImages,
+        mapLocation: null,
       ),
     ]);
     notifyListeners();

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 /// Project status for filtering and display.
 enum ProjectStatus {

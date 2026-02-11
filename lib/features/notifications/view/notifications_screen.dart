@@ -16,7 +16,7 @@ class NotificationsScreen extends StatelessWidget {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: AppColor.backgroundColor,
+          backgroundColor: AppColor.white,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -70,7 +70,7 @@ class _Header extends StatelessWidget {
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(
-              Icons.arrow_back,
+              Icons.arrow_forward,
               color: AppColor.orange900,
               size: 24.sp,
             ),

@@ -1,3 +1,4 @@
+import 'dart:math' show pi;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,7 @@ class _ProjectsBody extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFAFAFA), // Light off-white/cream background
+        backgroundColor: AppColor.white,
         body: SafeArea(
           child: Consumer<ProjectsController>(
             builder: (context, controller, _) {
@@ -120,10 +121,14 @@ class _Header extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: Padding(
               padding: EdgeInsets.all(8.w),
-              child: Icon(
-                Icons.arrow_forward,
-                size: 24.sp,
-                color: AppColor.orange900,
+              child: Transform(
+                alignment: Alignment.center,
+                transform: Matrix4.rotationY(pi),
+                child: Icon(
+                  Icons.arrow_back,
+                  size: 24.sp,
+                  color: AppColor.orange900,
+                ),
               ),
             ),
           ),

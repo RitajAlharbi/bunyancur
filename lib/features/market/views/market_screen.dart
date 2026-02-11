@@ -47,7 +47,7 @@ class _MarketScreenState extends State<MarketScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
@@ -260,7 +260,7 @@ class _MarketScreenState extends State<MarketScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.white,
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
           backgroundColor: AppColor.orange900,

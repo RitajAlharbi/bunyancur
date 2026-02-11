@@ -30,7 +30,7 @@ class _AvailableProjectsBody extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFFAFAFA),
+        backgroundColor: AppColor.white,
         body: SafeArea(
           child: Consumer<AvailableProjectsController>(
             builder: (context, controller, _) {

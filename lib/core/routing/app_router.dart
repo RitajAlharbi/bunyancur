@@ -7,7 +7,9 @@ import '../../features/roles/presentation/screens/roles_screen.dart';
 import '../../features/contractor/view/contractor_home_view.dart';
 import '../../features/projects/view/projects_screen.dart';
 import '../../features/projects/view/available_projects_screen.dart';
+import '../../features/projects/view/contractor_project_details_screen.dart';
 import '../../features/projects/model/project_status.dart';
+import '../../models/project_model.dart';
 import '../../features/favorites/view/favorites_screen.dart';
 import '../../features/notifications/view/notifications_screen.dart';
 
@@ -35,6 +37,11 @@ class AppRouter {
       }
       case Routes.availableProjectsScreen:
         return _createRoute(const AvailableProjectsScreen());
+      case Routes.contractorProjectDetailsScreen: {
+        final project = settings.arguments as ProjectModel?;
+        if (project == null) return null;
+        return _createRoute(ContractorProjectDetailsScreen(project: project));
+      }
       case Routes.favoritesScreen:
         return _createRoute(const FavoritesScreen());
       case Routes.notificationsScreen:

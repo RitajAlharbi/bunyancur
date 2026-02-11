@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../core/theme/app_colors.dart';
 import '../controllers/home_controller.dart';
 import '../core/widgets/app_bottom_nav.dart';
 import '../models/project_model.dart';
@@ -24,12 +25,10 @@ class _HomeViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor: AppColor.white,
         body: SafeArea(
           child: Consumer<HomeController>(
             builder: (context, controller, _) {
@@ -105,7 +104,7 @@ class _HeaderSection extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 24.r,
-          backgroundColor: theme.colorScheme.surfaceVariant,
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
           child: Image.asset(
             'assets/icons/avatar.png',
             width: 40.w,
@@ -243,7 +242,7 @@ class _SearchBar extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
@@ -361,7 +360,7 @@ class _CurrentProjectsList extends StatelessWidget {
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: colorScheme.surfaceVariant,
+                          color: colorScheme.surfaceContainerHighest,
                           child: Icon(
                             Icons.image_not_supported,
                             color: colorScheme.onSurfaceVariant,
@@ -456,7 +455,7 @@ class _AvailableProjectsGrid extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: colorScheme.surfaceVariant,
+                      color: colorScheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.image_not_supported,
                         color: colorScheme.onSurfaceVariant,
