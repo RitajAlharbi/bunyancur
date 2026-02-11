@@ -15,6 +15,9 @@ class AppColor {
  static const Color grey500 = Color(0xff9E9E9E);
  static const Color grey600 = Color(0xff757575);
  static const Color grey700 = Color(0xff616161);
+ static const Color grey800 = Color(0xff3A3A3A);
+
+ static const Color lightBeige = Color(0xFFF8F4EF);
  static const Color darkText = Color(0xFF111827);
  static const Color secondaryText = Color(0xFF6B7280);
  static const Color placeholderText = Color(0x7F111726);

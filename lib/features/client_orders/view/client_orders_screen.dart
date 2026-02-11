@@ -5,10 +5,18 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_bottom_nav.dart';
 import '../../../core/routing/routes.dart';
 import '../controller/client_controller.dart';
+import '../model/client_orders_route_args.dart';
 import 'widgets/order_card.dart';
 
 class ClientOrdersScreen extends StatefulWidget {
-  const ClientOrdersScreen({super.key});
+  final int initialTabIndex;
+  final ClientOrdersRouteArgs? routeArgs;
+
+  const ClientOrdersScreen({
+    super.key,
+    this.initialTabIndex = 0,
+    this.routeArgs,
+  });
 
   @override
   State<ClientOrdersScreen> createState() => _ClientOrdersScreenState();
@@ -21,6 +29,11 @@ class _ClientOrdersScreenState extends State<ClientOrdersScreen> {
   void initState() {
     super.initState();
     controller = ClientController();
+    if (widget.routeArgs?.formData != null) {
+      controller.addPendingOrderFromFormData(widget.routeArgs!.formData!);
+    } else if (widget.initialTabIndex != 0) {
+      controller.setInitialTab(widget.initialTabIndex);
+    }
   }
 
   @override
@@ -44,7 +57,7 @@ class _ClientOrdersScreenState extends State<ClientOrdersScreen> {
     }
     if (index == 1) return; // already on orders
     if (index == 4) {
-      // TODO: profile
+      Navigator.pushNamed(context, Routes.profileSettingsScreen);
       return;
     }
   }
@@ -81,6 +94,7 @@ class _ClientOrdersScreenState extends State<ClientOrdersScreen> {
                       final order = controller.currentOrders[index];
                       return OrderCard(
                         order: order,
+                        isOffersExpanded: controller.isOffersExpanded(order.id),
                         onDetails: () {
                           // TODO: onDetails
                           debugPrint('onDetails ${order.id}');
@@ -91,13 +105,15 @@ class _ClientOrdersScreenState extends State<ClientOrdersScreen> {
                           // TODO: onViewDescription
                           debugPrint('onViewDescription ${order.id}');
                         },
-                        onAccept: () {
-                          // TODO: onAccept
-                          debugPrint('onAccept ${order.id}');
+                        onToggleOffers: () =>
+                            controller.toggleOffersExpanded(order.id),
+                        onOfferAccept: () {
+                          // TODO: onOfferAccept
+                          debugPrint('onOfferAccept ${order.id}');
                         },
-                        onDecline: () {
-                          // TODO: onDecline
-                          debugPrint('onDecline ${order.id}');
+                        onOfferReject: () {
+                          // TODO: onOfferReject
+                          debugPrint('onOfferReject ${order.id}');
                         },
                         onRate: () {
                           // TODO: onRate

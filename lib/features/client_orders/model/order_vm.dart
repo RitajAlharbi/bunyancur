@@ -1,3 +1,5 @@
+import 'offer_vm.dart';
+
 enum OrderStatus {
   active,
   pending,
@@ -20,6 +22,7 @@ class OrderVM {
   final String price;
   final String orderNumber;
   final double progressPercent;
+  final List<OfferVM> offers;
 
   const OrderVM({
     required this.id,
@@ -36,5 +39,6 @@ class OrderVM {
     required this.price,
     required this.orderNumber,
     this.progressPercent = 0,
+    this.offers = const [],
   });
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../controllers/create_project_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../controllers/create_designer_project_controller.dart';
 import '../widgets/create_project_dropdown_field.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_primary_button.dart';
@@ -10,29 +10,29 @@ import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_radio_option.dart';
 import '../widgets/create_project_section_label.dart';
 import '../widgets/create_project_text_field.dart';
-import 'create_project_location_screen.dart';
+import 'create_designer_project_step2.dart';
 
-class CreateProjectScreen extends StatefulWidget {
-  const CreateProjectScreen({super.key});
+/// Step 1 of the Interior Designer (المصمم الداخلي) project creation flow.
+class CreateDesignerProjectScreen extends StatefulWidget {
+  const CreateDesignerProjectScreen({super.key});
 
   @override
-  State<CreateProjectScreen> createState() => _CreateProjectScreenState();
+  State<CreateDesignerProjectScreen> createState() =>
+      _CreateDesignerProjectScreenState();
 }
 
-class _CreateProjectScreenState extends State<CreateProjectScreen> {
-  late final CreateProjectController controller;
+class _CreateDesignerProjectScreenState extends State<CreateDesignerProjectScreen> {
+  late final CreateDesignerProjectController controller;
   late final TextEditingController nameController;
   late final TextEditingController descriptionController;
 
   @override
   void initState() {
     super.initState();
-    controller = CreateProjectController();
-    controller.loadProjectTypes('contractor');
-    nameController =
-        TextEditingController(text: controller.data.title);
+    controller = CreateDesignerProjectController();
+    nameController = TextEditingController(text: controller.data.projectName);
     descriptionController =
-        TextEditingController(text: controller.data.description);
+        TextEditingController(text: controller.data.projectDescription);
   }
 
   @override
@@ -63,7 +63,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CreateProjectHeader(title: 'إنشاء مشروع جديد'),
+                    const CreateProjectHeader(title: 'إنشاء مشروع جديد'),
                     SizedBox(height: 12.h),
                     const CreateProjectProgressIndicator(
                       totalSteps: 4,
@@ -89,36 +89,30 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                     SizedBox(height: 8.h),
                     CreateProjectTextField(
                       controller: nameController,
-                      hintText: 'اسم المشروع مطلوب',
-                      onChanged: controller.setTitle,
+                      hintText: 'تصميم داخلي لصالة المعيشة',
+                      onChanged: controller.updateProjectName,
                     ),
+                    if (controller.data.projectName.trim().isEmpty) ...[
+                      SizedBox(height: 4.h),
+                      Text(
+                        'اسم المشروع مطلوب',
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.caption12
+                            .copyWith(color: AppColor.grey500),
+                      ),
+                    ],
                     SizedBox(height: 16.h),
                     const CreateProjectSectionLabel(
                       text: 'نوع مشروعك',
                       isRequired: true,
                     ),
                     SizedBox(height: 8.h),
-                    if (controller.isLoadingTypes)
-                      const Center(child: CircularProgressIndicator())
-                    else
-                      CreateProjectDropdownField(
-                        hintText: 'اختر نوع مشروعك',
-                        value: controller.data.projectTypeName.isEmpty
-                            ? null
-                            : controller.data.projectTypeName,
-                        items: controller.projectTypeNames,
-                        onChanged: controller.setProjectTypeByName,
-                      ),
-                    if (controller.errorMessage != null &&
-                        controller.projectTypeNames.isEmpty) ...[
-                      SizedBox(height: 8.h),
-                      Text(
-                        controller.errorMessage!,
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.caption12
-                            .copyWith(color: AppColor.orange900),
-                      ),
-                    ],
+                    CreateProjectDropdownField(
+                      hintText: 'اختر نوع مشروعك',
+                      value: controller.data.projectType,
+                      items: controller.projectTypes,
+                      onChanged: controller.updateProjectType,
+                    ),
                     SizedBox(height: 16.h),
                     const CreateProjectSectionLabel(
                       text: 'مساحة المشروع بالمتر المربع',
@@ -130,8 +124,8 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                         padding: EdgeInsets.only(bottom: 12.h),
                         child: CreateProjectRadioOption(
                           label: area,
-                          isSelected: controller.data.areaRange == area,
-                          onTap: () => controller.setAreaRange(area),
+                          isSelected: controller.data.projectArea == area,
+                          onTap: () => controller.updateProjectArea(area),
                         ),
                       );
                     }),
@@ -143,7 +137,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                       hintText: 'اكتب وصفاً تفصيلياً لمشروعك... (اختياري)',
                       minLines: 3,
                       maxLines: 5,
-                      onChanged: controller.setDescription,
+                      onChanged: controller.updateProjectDescription,
                     ),
                     SizedBox(height: 24.h),
                     CreateProjectPrimaryButton(
@@ -153,7 +147,8 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => CreateProjectLocationScreen(
+                                  builder: (_) =>
+                                      CreateDesignerProjectStep2(
                                     controller: controller,
                                   ),
                                 ),

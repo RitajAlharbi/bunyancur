@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../controllers/create_project_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../controllers/create_project_controller.dart';
 import '../widgets/create_project_dropdown_field.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_primary_button.dart';

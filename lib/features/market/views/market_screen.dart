@@ -302,11 +302,12 @@ class _MarketScreenState extends State<MarketScreen> {
               return;
             }
             if (index == 1) {
+              // TODO: OrdersScreen route
               Navigator.pushReplacementNamed(context, Routes.clientOrdersScreen);
               return;
             }
             if (index == 4) {
-              // TODO: ProfileScreen route
+              Navigator.pushNamed(context, Routes.profileSettingsScreen);
               return;
             }
           },

@@ -14,7 +14,13 @@ class Routes {
  static const String loginScreen = '/loginScreen';
  static const String signupScreen = '/signupScreen';
  static const String homeScreen = '/homeScreen';
+
+ // Admin temporary navigation
+ static const String adminLogin = '/adminLogin';
+ static const String adminHome = '/adminHome';
+ static const String adminProjects = '/adminProjects';
  static const String clientOrdersScreen = '/clientOrders';
+ static const String profileSettingsScreen = '/profileSettings';
 
  static const String login = '/login';
  static const String signup = '/signup';
