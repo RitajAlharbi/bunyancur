@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../routing/routes.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/home/view/home_screen.dart';
 import '../../features/roles/presentation/screens/roles_screen.dart';
 import '../../features/messages/views/messages_screen.dart';
 import '../../features/messages/views/chat_screen.dart';
@@ -18,6 +18,7 @@ import '../../features/admin/views/admin_login_screen.dart';
 import '../../features/admin/views/admin_dashboard_screen.dart';
 import '../../features/auth/views/login_screen.dart';
 import '../../features/roles/models/role_type.dart';
+import '../../features/client_orders/view/client_orders_screen.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -32,6 +33,8 @@ class AppRouter {
         return _createRoute(const OnboardingScreen());
       case Routes.homeScreen:
         return _createRoute(const HomeScreen());
+      case Routes.clientOrdersScreen:
+        return _createRoute(const ClientOrdersScreen());
       case Routes.marketScreen:
         return _createRoute(const MarketScreen());
       case Routes.addProduct:

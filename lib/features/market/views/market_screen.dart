@@ -303,6 +303,7 @@ class _MarketScreenState extends State<MarketScreen> {
             }
             if (index == 1) {
               // TODO: OrdersScreen route
+              Navigator.pushReplacementNamed(context, Routes.clientOrdersScreen);
               return;
             }
             if (index == 4) {

@@ -19,4 +19,5 @@ class Routes {
  static const String adminLogin = '/adminLogin';
  static const String adminHome = '/adminHome';
  static const String adminProjects = '/adminProjects';
+ static const String clientOrdersScreen = '/clientOrders';
 }
