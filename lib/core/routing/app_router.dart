@@ -14,6 +14,10 @@ import '../../features/market/product_details/views/product_details_screen.dart'
 import '../../features/market/product_details/models/product_details_model.dart';
 import '../../features/market/purchase_product/views/purchase_product_screen.dart';
 import '../../features/market/purchase_product/models/purchase_product_model.dart';
+import '../../features/admin/views/admin_login_screen.dart';
+import '../../features/admin/views/admin_dashboard_screen.dart';
+import '../../features/auth/views/login_screen.dart';
+import '../../features/roles/models/role_type.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -46,6 +50,18 @@ class AppRouter {
       case Routes.chatScreen:
         final threadId = settings.arguments as String? ?? '';
         return _createRoute(ChatScreen(threadId: threadId));
+
+      case Routes.loginScreen:
+        final role = settings.arguments as RoleType?;
+        return _createRoute(LoginScreen(role: role));
+
+      case Routes.adminLogin:
+        return _createRoute(const AdminLoginScreen());
+      case Routes.adminHome:
+      case Routes.adminProjects:
+        return _createRoute(const AdminDashboardScreen(
+          initialRoute: Routes.adminProjects,
+        ));
 
       default:
         return null;

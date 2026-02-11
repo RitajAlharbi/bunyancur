@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../controllers/create_project_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../controllers/create_designer_project_controller.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_primary_button.dart';
 
-class CreateProjectLocationMapScreen extends StatefulWidget {
-  final CreateProjectController controller;
+/// Map screen for selecting location in the Interior Designer project flow.
+class CreateDesignerProjectLocationMapScreen extends StatefulWidget {
+  final CreateDesignerProjectController controller;
 
-  const CreateProjectLocationMapScreen({
+  const CreateDesignerProjectLocationMapScreen({
     super.key,
     required this.controller,
   });
 
   @override
-  State<CreateProjectLocationMapScreen> createState() =>
-      _CreateProjectLocationMapScreenState();
+  State<CreateDesignerProjectLocationMapScreen> createState() =>
+      _CreateDesignerProjectLocationMapScreenState();
 }
 
-class _CreateProjectLocationMapScreenState
-    extends State<CreateProjectLocationMapScreen> {
+class _CreateDesignerProjectLocationMapScreenState
+    extends State<CreateDesignerProjectLocationMapScreen> {
   GoogleMapController? _mapController;
   bool _hasCenteredOnUser = false;
   LatLng? _tempSelectedLatLng;

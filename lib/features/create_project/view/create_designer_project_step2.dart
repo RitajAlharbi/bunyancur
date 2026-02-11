@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../controllers/create_project_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../controllers/create_designer_project_controller.dart';
 import '../widgets/create_project_header.dart';
-import '../widgets/create_project_map_picker.dart';
+import '../widgets/create_designer_project_map_picker.dart';
 import '../widgets/create_project_primary_button.dart';
 import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_section_label.dart';
 import '../widgets/create_project_secondary_button.dart';
 import '../widgets/create_project_text_field.dart';
-import 'create_project_location_map_screen.dart';
-import 'create_project_budget_timeline_screen.dart';
+import 'create_designer_project_location_map_screen.dart';
+import 'create_designer_project_step3.dart';
 
-class CreateProjectLocationScreen extends StatefulWidget {
-  final CreateProjectController controller;
+/// Step 2 of the Interior Designer (المصمم الداخلي) project creation flow — location.
+class CreateDesignerProjectStep2 extends StatefulWidget {
+  final CreateDesignerProjectController controller;
 
-  const CreateProjectLocationScreen({
+  const CreateDesignerProjectStep2({
     super.key,
     required this.controller,
   });
 
   @override
-  State<CreateProjectLocationScreen> createState() =>
-      _CreateProjectLocationScreenState();
+  State<CreateDesignerProjectStep2> createState() =>
+      _CreateDesignerProjectStep2State();
 }
 
-class _CreateProjectLocationScreenState
-    extends State<CreateProjectLocationScreen> {
+class _CreateDesignerProjectStep2State extends State<CreateDesignerProjectStep2> {
   late final TextEditingController addressController;
   late final TextEditingController cityController;
   late final TextEditingController districtController;
@@ -36,9 +36,12 @@ class _CreateProjectLocationScreenState
   @override
   void initState() {
     super.initState();
-    addressController = TextEditingController(text: widget.controller.data.address);
-    cityController = TextEditingController(text: widget.controller.data.city);
-    districtController = TextEditingController(text: widget.controller.data.district);
+    addressController =
+        TextEditingController(text: widget.controller.data.address);
+    cityController =
+        TextEditingController(text: widget.controller.data.city);
+    districtController =
+        TextEditingController(text: widget.controller.data.district);
     widget.controller.addListener(_handleControllerUpdate);
   }
 
@@ -73,7 +76,7 @@ class _CreateProjectLocationScreenState
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => CreateProjectLocationMapScreen(
+        builder: (_) => CreateDesignerProjectLocationMapScreen(
           controller: widget.controller,
         ),
       ),
@@ -157,9 +160,10 @@ class _CreateProjectLocationScreenState
                       },
                     ),
                     SizedBox(height: 20.h),
-                    const CreateProjectSectionLabel(text: 'حدد الموقع على الخريطة'),
+                    const CreateProjectSectionLabel(
+                        text: 'حدد الموقع على الخريطة'),
                     SizedBox(height: 10.h),
-                    CreateProjectMapPicker(
+                    CreateDesignerProjectMapPicker(
                       controller: widget.controller,
                       onTap: _handleOpenMap,
                     ),
@@ -174,7 +178,7 @@ class _CreateProjectLocationScreenState
                     ],
                     SizedBox(height: 10.h),
                     Text(
-                      'سيساعد تحديد الموقع بدقة المقاولين في تقديم عروض أفضل',
+                      'سيساعد تحديد الموقع بدقة المصممين الداخليين في تقديم عروض أفضل',
                       textAlign: TextAlign.right,
                       style: AppTextStyles.caption12,
                     ),
@@ -197,7 +201,7 @@ class _CreateProjectLocationScreenState
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                            CreateProjectBudgetTimelineScreen(
+                                            CreateDesignerProjectStep3(
                                           controller: widget.controller,
                                         ),
                                       ),

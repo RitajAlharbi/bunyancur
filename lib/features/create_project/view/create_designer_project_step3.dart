@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
-import '../../controllers/create_project_controller.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../controllers/create_designer_project_controller.dart';
 import '../widgets/create_project_dropdown_field.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_primary_button.dart';
@@ -11,23 +11,24 @@ import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_section_label.dart';
 import '../widgets/create_project_secondary_button.dart';
 import '../widgets/create_project_text_field.dart';
-import 'create_project_upload_summary_screen.dart';
+import 'create_designer_project_upload_summary_screen.dart';
 
-class CreateProjectBudgetTimelineScreen extends StatefulWidget {
-  final CreateProjectController controller;
+/// Step 3 of the Interior Designer (المصمم الداخلي) project creation flow — budget & timeline.
+class CreateDesignerProjectStep3 extends StatefulWidget {
+  final CreateDesignerProjectController controller;
 
-  const CreateProjectBudgetTimelineScreen({
+  const CreateDesignerProjectStep3({
     super.key,
     required this.controller,
   });
 
   @override
-  State<CreateProjectBudgetTimelineScreen> createState() =>
-      _CreateProjectBudgetTimelineScreenState();
+  State<CreateDesignerProjectStep3> createState() =>
+      _CreateDesignerProjectStep3State();
 }
 
-class _CreateProjectBudgetTimelineScreenState
-    extends State<CreateProjectBudgetTimelineScreen> {
+class _CreateDesignerProjectStep3State
+    extends State<CreateDesignerProjectStep3> {
   late final TextEditingController customBudgetController;
   bool _isSyncingBudgetText = false;
 
@@ -163,7 +164,7 @@ class _CreateProjectBudgetTimelineScreenState
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'الجدول الزمني قابل للتعديل بالاتفاق مع المقاول',
+                      'الجدول الزمني قابل للتعديل بالاتفاق مع المصمم الداخلي',
                       textAlign: TextAlign.right,
                       style: AppTextStyles.caption12,
                     ),
@@ -186,7 +187,7 @@ class _CreateProjectBudgetTimelineScreenState
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                            CreateProjectUploadSummaryScreen(
+                                            CreateDesignerProjectUploadSummaryScreen(
                                           controller: widget.controller,
                                         ),
                                       ),
@@ -273,4 +274,3 @@ class _BudgetInputFormatter extends TextInputFormatter {
     return formatted.length;
   }
 }
-

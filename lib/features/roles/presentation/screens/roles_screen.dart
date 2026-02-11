@@ -31,7 +31,11 @@ class _RolesScreenState extends State<RolesScreen> {
 
   void _handleRole(RoleType role) {
     controller.onRoleSelected(role);
-    Navigator.pushReplacementNamed(context, Routes.homeScreen);
+    Navigator.pushReplacementNamed(
+      context,
+      Routes.loginScreen,
+      arguments: role,
+    );
   }
 
   @override
@@ -83,6 +87,22 @@ class _RolesScreenState extends State<RolesScreen> {
                     subtitle: 'عرض أعمالك واستقبال طلبات التصميم',
                     iconPath: 'assets/icons/Icon.svg',
                     onTap: () => _handleRole(RoleType.designer),
+                  ),
+                  SizedBox(height: 32.h),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        Routes.adminLogin,
+                      );
+                    },
+                    child: Text(
+                      'تسجيل دخول الادمن (مؤقت)',
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColor.orange900,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),

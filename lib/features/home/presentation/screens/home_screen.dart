@@ -6,7 +6,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_bottom_nav.dart';
 import '../../../market/views/market_screen.dart';
 import '../../../../core/routing/routes.dart';
-import '../../../create_project/presentation/screens/create_project_screen.dart';
+import '../../../create_project/view/create_project_screen.dart';
+import '../../../create_project/view/create_designer_project_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -194,6 +195,15 @@ class HomeScreen extends StatelessWidget {
                       child: _ServiceCard(
                         title: 'إنشاء طلب مصمم داخلي',
                         imageUrl: 'assets/images/service1.png',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  const CreateDesignerProjectScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(width: 16.w),
