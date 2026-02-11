@@ -4,10 +4,75 @@ import 'package:image_picker/image_picker.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/create_project_form_data.dart';
 
+class ProjectTypeItem {
+  final String id;
+  final String nameAr;
+  final int orderNo;
+  final String category;
+  final bool phasesEnabled;
+
+  const ProjectTypeItem({
+    required this.id,
+    required this.nameAr,
+    required this.orderNo,
+    required this.category,
+    required this.phasesEnabled,
+  });
+
+  factory ProjectTypeItem.fromJson(Map<String, dynamic> json) {
+    return ProjectTypeItem(
+      id: (json['id'] ?? '').toString(),
+      nameAr: (json['name_ar'] ?? '').toString(),
+      orderNo: (json['order_no'] as num?)?.toInt() ?? 0,
+      category: (json['category'] ?? '').toString(),
+      phasesEnabled: json['phases_enabled'] == true,
+    );
+  }
+}
+
+class ProviderItem {
+  final String id;
+  final String type;
+  final String city;
+  final String displayName;
+  final double avgRating;
+  final int reviewsCount;
+
+  const ProviderItem({
+    required this.id,
+    required this.type,
+    required this.city,
+    required this.displayName,
+    required this.avgRating,
+    required this.reviewsCount,
+  });
+
+  factory ProviderItem.fromJson(Map<String, dynamic> json) {
+    return ProviderItem(
+      id: (json['id'] ?? '').toString(),
+      type: (json['type'] ?? '').toString(),
+      city: (json['city'] ?? '').toString(),
+      displayName: (json['display_name'] ?? '').toString(),
+      avgRating: (json['avg_rating'] as num?)?.toDouble() ?? 0,
+      reviewsCount: (json['reviews_count'] as num?)?.toInt() ?? 0,
+    );
+  }
+}
+
 class CreateProjectController extends ChangeNotifier {
+  final SupabaseClient _client = Supabase.instance.client;
   CreateProjectFormData _data = const CreateProjectFormData();
+  bool _isLoadingTypes = false;
+  bool _isLoadingProviders = false;
+  bool _isSubmitting = false;
+  String? _errorMessage;
+
+  List<ProjectTypeItem> _projectTypes = const <ProjectTypeItem>[];
+  List<ProviderItem> _recommendedProviders = const <ProviderItem>[];
+
   bool _isFetchingLocation = false;
   String? _locationError;
   LocationPermission _permissionStatus = LocationPermission.denied;
@@ -18,13 +83,23 @@ class CreateProjectController extends ChangeNotifier {
   final List<PlatformFile> _projectFiles = [];
 
   CreateProjectFormData get data => _data;
+  bool get isLoadingTypes => _isLoadingTypes;
+  bool get isLoadingProviders => _isLoadingProviders;
+  bool get isSubmitting => _isSubmitting;
+  String? get errorMessage => _errorMessage;
+  List<ProjectTypeItem> get projectTypes => List.unmodifiable(_projectTypes);
+  List<String> get projectTypeNames =>
+      _projectTypes.map((type) => type.nameAr).toList();
+  List<ProviderItem> get recommendedProviders =>
+      List.unmodifiable(_recommendedProviders);
   bool get isFetchingLocation => _isFetchingLocation;
   String? get locationError => _locationError;
   LatLng? get currentLatLng => _currentLatLng;
   LatLng? get selectedLatLng => _selectedLatLng;
-  String? get selectedBudgetRange => _data.budgetRange;
-  String? get selectedTimeline => _data.timeline;
-  int? get customBudgetAmount => _data.customBudgetAmount;
+  String? get selectedBudgetRange =>
+      _data.budgetRange.isEmpty ? null : _data.budgetRange;
+  String? get selectedTimeline =>
+      _data.expectedDuration.isEmpty ? null : _data.expectedDuration;
   List<XFile> get projectImages => List.unmodifiable(_projectImages);
   List<PlatformFile> get projectFiles => List.unmodifiable(_projectFiles);
   bool get hasSelectedLocation =>
@@ -32,43 +107,21 @@ class CreateProjectController extends ChangeNotifier {
   bool get hasLocationPermission =>
       _permissionStatus == LocationPermission.always ||
       _permissionStatus == LocationPermission.whileInUse;
-  bool get isStep1Valid =>
-      _data.projectName.trim().isNotEmpty &&
-      _data.projectType != null &&
-      _data.projectArea != null;
-  bool get isCustomBudgetSelected => _data.budgetRange == _customBudgetLabel;
-  bool get hasUploadedImages => _projectImages.isNotEmpty;
-  bool get hasUploadedFiles => _projectFiles.isNotEmpty;
-  bool get isStep4Valid => hasUploadedImages && hasUploadedFiles;
-  bool get isStep3Valid {
-    if (_data.budgetRange == null || _data.timeline == null) {
-      return false;
-    }
-    if (isCustomBudgetSelected) {
-      return _data.customBudgetAmount != null;
-    }
-    return true;
-  }
-
-  String get formattedBudget {
-    if (_data.customBudgetAmount == null) return '';
-    final formatted = _formatBudgetAmount(_data.customBudgetAmount!);
-    return '$formatted ريال';
-  }
+  bool get isStep1Valid => _data.isStep1Valid;
+  bool get isStep3Valid => _data.isBudgetValid;
+  bool get canSubmit => _data.isReadyToSubmit && !_isSubmitting;
 
   String get summaryProjectName =>
-      _data.projectName.trim().isEmpty ? '-' : _data.projectName.trim();
-  String get summaryProjectType => _data.projectType ?? '-';
-  String get summaryProjectArea => _data.projectArea ?? '-';
-  String get summaryBudget {
-    if (_data.budgetRange == null) return '-';
-    if (isCustomBudgetSelected) {
-      return formattedBudget.isEmpty ? '-' : formattedBudget;
-    }
-    return _data.budgetRange!;
-  }
-
-  String get summaryTimeline => _data.timeline ?? '-';
+      _data.title.trim().isEmpty ? '-' : _data.title.trim();
+  String get summaryProjectType =>
+      _data.projectTypeName.trim().isEmpty ? '-' : _data.projectTypeName.trim();
+  String get summaryProjectArea =>
+      _data.areaRange.trim().isEmpty ? '-' : _data.areaRange.trim();
+  String get summaryBudget =>
+      _data.budgetRange.trim().isEmpty ? '-' : _data.budgetRange.trim();
+  String get summaryTimeline => _data.expectedDuration.trim().isEmpty
+      ? '-'
+      : _data.expectedDuration.trim();
 
   String get summaryLocation {
     final parts = <String>[
@@ -80,20 +133,7 @@ class CreateProjectController extends ChangeNotifier {
     return parts.join(' - ');
   }
 
-  static const String _customBudgetLabel = 'تحديد مبلغ آخر';
   static const int _maxProjectImages = 10;
-
-  final List<String> projectTypes = const [
-    'ديكور وتشطيب',
-    'أعمال السقف',
-    'السباكة',
-    'الكهرباء',
-    'ترميم فيلا',
-    'تجديد المطبخ',
-    'أعمال الأساسات',
-    'بناء كامل',
-    'أخرى',
-  ];
 
   final List<String> projectAreas = const [
     '100 أو أقل',
@@ -113,7 +153,6 @@ class CreateProjectController extends ChangeNotifier {
     '200,000 - 300,000 ريال',
     '300,000 - 500,000 ريال',
     'أكثر من 500,000 ريال',
-    _customBudgetLabel,
   ];
 
   final List<String> timelines = const [
@@ -125,68 +164,159 @@ class CreateProjectController extends ChangeNotifier {
     'أكثر من سنة',
   ];
 
-  void updateProjectName(String value) {
-    if (_data.projectName == value) return;
-    _data = _data.copyWith(projectName: value);
+  Future<void> loadProjectTypes([String category = 'contractor']) async {
+    _isLoadingTypes = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final response = await _client
+          .from('project_types')
+          .select('id,name_ar,order_no,category,phases_enabled')
+          .eq('category', category)
+          .order('order_no', ascending: true);
+
+      final list = (response as List<dynamic>)
+          .map((item) => ProjectTypeItem.fromJson(item as Map<String, dynamic>))
+          .where((item) => item.id.isNotEmpty && item.nameAr.isNotEmpty)
+          .toList();
+      _projectTypes = list;
+    } catch (e) {
+      _errorMessage = 'تعذر تحميل أنواع المشاريع';
+      _projectTypes = const <ProjectTypeItem>[];
+    } finally {
+      _isLoadingTypes = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadRecommendedProviders({
+    String type = 'contractor',
+    String? city,
+  }) async {
+    _isLoadingProviders = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      var query = _client
+          .from('professional_profiles')
+          .select('id,type,city,avg_rating,reviews_count,display_name')
+          .eq('type', type);
+
+      final cityValue = (city ?? _data.city).trim();
+      if (cityValue.isNotEmpty) {
+        query = query.eq('city', cityValue);
+      }
+
+      final response = await query
+          .order('avg_rating', ascending: false)
+          .order('reviews_count', ascending: false)
+          .limit(20);
+
+      _recommendedProviders = (response as List<dynamic>)
+          .map((item) => ProviderItem.fromJson(item as Map<String, dynamic>))
+          .where((item) => item.id.isNotEmpty)
+          .toList();
+    } catch (e) {
+      _errorMessage = 'تعذر تحميل المقاولين المقترحين';
+      _recommendedProviders = const <ProviderItem>[];
+    } finally {
+      _isLoadingProviders = false;
+      notifyListeners();
+    }
+  }
+
+  void setTitle(String value) {
+    if (_data.title == value) return;
+    _data = _data.copyWith(title: value);
     notifyListeners();
   }
 
-  void updateProjectType(String? value) {
-    if (_data.projectType == value) return;
-    _data = _data.copyWith(projectType: value);
+  void setProjectType({required String id, required String name}) {
+    if (_data.projectTypeId == id && _data.projectTypeName == name) return;
+    _data = _data.copyWith(projectTypeId: id, projectTypeName: name);
     notifyListeners();
   }
 
-  void updateProjectArea(String value) {
-    if (_data.projectArea == value) return;
-    _data = _data.copyWith(projectArea: value);
+  void setProjectTypeByName(String? name) {
+    if (name == null || name.trim().isEmpty) {
+      if (_data.projectTypeId.isEmpty && _data.projectTypeName.isEmpty) return;
+      _data = _data.copyWith(projectTypeId: '', projectTypeName: '');
+      notifyListeners();
+      return;
+    }
+    final matched = _projectTypes.where((type) => type.nameAr == name).toList();
+    if (matched.isEmpty) return;
+    setProjectType(id: matched.first.id, name: matched.first.nameAr);
+  }
+
+  void setAreaRange(String value) {
+    if (_data.areaRange == value) return;
+    _data = _data.copyWith(areaRange: value);
     notifyListeners();
   }
 
-  void updateProjectDescription(String value) {
-    if (_data.projectDescription == value) return;
-    _data = _data.copyWith(projectDescription: value);
+  void setDescription(String value) {
+    if (_data.description == value) return;
+    _data = _data.copyWith(description: value);
     notifyListeners();
   }
 
-  void updateAddress(String value) {
+  void setAddress(String value) {
     if (_data.address == value) return;
     _data = _data.copyWith(address: value);
     notifyListeners();
   }
 
-  void updateCity(String value) {
+  void setCity(String value) {
     if (_data.city == value) return;
     _data = _data.copyWith(city: value);
     notifyListeners();
   }
 
-  void updateDistrict(String value) {
+  void setDistrict(String value) {
     if (_data.district == value) return;
     _data = _data.copyWith(district: value);
     notifyListeners();
   }
 
-  void updateBudgetRange(String? value) {
-    if (_data.budgetRange == value) return;
-    _data = _data.copyWith(
-      budgetRange: value,
-      customBudgetAmount: value == _customBudgetLabel
-          ? _data.customBudgetAmount
-          : null,
-    );
+  void setLocation({
+    required double? latitude,
+    required double? longitude,
+  }) {
+    if (_data.latitude == latitude && _data.longitude == longitude) return;
+    _data = _data.copyWith(latitude: latitude, longitude: longitude);
     notifyListeners();
   }
 
-  void updateTimeline(String? value) {
-    if (_data.timeline == value) return;
-    _data = _data.copyWith(timeline: value);
+  void setBudgetRange(String? value) {
+    final budgetValue = value ?? '';
+    if (_data.budgetRange == budgetValue) return;
+    _data = _data.copyWith(budgetRange: budgetValue);
     notifyListeners();
   }
 
-  void updateCustomBudgetAmount(int? value) {
-    if (_data.customBudgetAmount == value) return;
-    _data = _data.copyWith(customBudgetAmount: value);
+  void setExpectedDuration(String? value) {
+    final durationValue = value ?? '';
+    if (_data.expectedDuration == durationValue) return;
+    _data = _data.copyWith(expectedDuration: durationValue);
+    notifyListeners();
+  }
+
+  void setUploadedImageUrls(List<String> urls) {
+    _data = _data.copyWith(uploadedImageUrls: urls);
+    notifyListeners();
+  }
+
+  void toggleProviderSelection(String providerId) {
+    final current = List<String>.from(_data.selectedProviderIds);
+    if (current.contains(providerId)) {
+      current.remove(providerId);
+    } else {
+      current.add(providerId);
+    }
+    _data = _data.copyWith(selectedProviderIds: current);
     notifyListeners();
   }
 
@@ -252,19 +382,6 @@ class CreateProjectController extends ChangeNotifier {
     return segments.last.toLowerCase();
   }
 
-  String _formatBudgetAmount(int amount) {
-    final digits = amount.toString();
-    final buffer = StringBuffer();
-    for (var i = 0; i < digits.length; i++) {
-      final positionFromEnd = digits.length - i;
-      buffer.write(digits[i]);
-      if (positionFromEnd > 1 && positionFromEnd % 3 == 1) {
-        buffer.write(',');
-      }
-    }
-    return buffer.toString();
-  }
-
   Future<bool> initializeLocation() async {
     if (_isFetchingLocation) return false;
     _isFetchingLocation = true;
@@ -318,11 +435,7 @@ class CreateProjectController extends ChangeNotifier {
     _isFetchingLocation = true;
     _locationError = null;
     _selectedLatLng = latLng;
-    _data = _data.copyWith(
-      latitude: latLng.latitude,
-      longitude: latLng.longitude,
-    );
-    notifyListeners();
+    setLocation(latitude: latLng.latitude, longitude: latLng.longitude);
     await _reverseGeocode(latLng);
     _isFetchingLocation = false;
     notifyListeners();
@@ -356,4 +469,91 @@ class CreateProjectController extends ChangeNotifier {
       _locationError = 'تعذر تحديد العنوان';
     }
   }
+
+  Future<String?> submitProjectAndSendRequests() async {
+    if (_isSubmitting) return null;
+    _errorMessage = null;
+
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      _errorMessage = 'يجب تسجيل الدخول أولاً';
+      notifyListeners();
+      return null;
+    }
+    if (!_data.isReadyToSubmit) {
+      _errorMessage = 'يرجى استكمال بيانات المشروع المطلوبة';
+      notifyListeners();
+      return null;
+    }
+
+    _isSubmitting = true;
+    notifyListeners();
+
+    try {
+      // TODO: upload local files/images to Supabase Storage and store URLs.
+      final projectResponse = await _client
+          .from('projects')
+          .insert({
+            'client_id': user.id,
+            'title': _data.title.trim(),
+            'project_type_id': _data.projectTypeId.trim(),
+            'area_range': _data.areaRange.trim(),
+            'description': _data.description.trim().isEmpty
+                ? null
+                : _data.description.trim(),
+            'city': _data.city.trim(),
+            'district': _data.district.trim(),
+            'address': _data.address.trim(),
+            'latitude': _data.latitude,
+            'longitude': _data.longitude,
+            'budget_range': _data.budgetRange.trim(),
+            'expected_duration': _data.expectedDuration.trim(),
+            'status': 'published',
+            'assigned_provider_id': null,
+            'assigned_provider_role': null,
+          })
+          .select('id')
+          .single();
+
+      final projectId = (projectResponse['id'] ?? '').toString();
+      if (projectId.isEmpty) {
+        throw Exception('invalid_project_id');
+      }
+
+      final selectedProviders = _data.selectedProviderIds.toSet().toList();
+      if (selectedProviders.isNotEmpty) {
+        final nowIso = DateTime.now().toUtc().toIso8601String();
+        final requestRows = selectedProviders
+            .map(
+              (providerId) => <String, dynamic>{
+                'project_id': projectId,
+                'provider_id': providerId,
+                'status': 'pending',
+                'sent_at': nowIso,
+              },
+            )
+            .toList();
+        await _client.from('service_requests').insert(requestRows);
+      }
+
+      return projectId;
+    } catch (e) {
+      _errorMessage = 'تعذر إنشاء المشروع حالياً، حاول مرة أخرى';
+      return null;
+    } finally {
+      _isSubmitting = false;
+      notifyListeners();
+    }
+  }
+
+  // Compatibility wrappers for existing widgets/screens.
+  void updateProjectName(String value) => setTitle(value);
+  void updateProjectType(String? value) => setProjectTypeByName(value);
+  void updateProjectArea(String value) => setAreaRange(value);
+  void updateProjectDescription(String value) => setDescription(value);
+  void updateAddress(String value) => setAddress(value);
+  void updateCity(String value) => setCity(value);
+  void updateDistrict(String value) => setDistrict(value);
+  void updateBudgetRange(String? value) => setBudgetRange(value);
+  void updateTimeline(String? value) => setExpectedDuration(value);
 }

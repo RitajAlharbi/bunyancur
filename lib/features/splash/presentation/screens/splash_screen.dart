@@ -1,8 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../roles/presentation/screens/roles_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../auth/view/login_screen.dart';
+import '../../../home/view/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,12 +16,27 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () {
+    _routeAfterSplash();
+  }
+
+  Future<void> _routeAfterSplash() async {
+    await Future.delayed(const Duration(seconds: 2));
+
+    final session = Supabase.instance.client.auth.currentSession;
+
+    if (!mounted) return;
+
+    if (session == null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const RolesScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
-    });
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    }
   }
 
   @override

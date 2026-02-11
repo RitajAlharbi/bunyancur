@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/app_constants.dart';
 import 'core/cubit/locale/locale_cubit.dart';
 import 'core/cubit/theme/theme_cubit.dart';
@@ -15,7 +16,15 @@ void main() async {
  await EasyLocalization.ensureInitialized();
  Bloc.observer = AppBlocObserver();
  await AppPreferences().init();
-
+ await Supabase.initialize(
+   url: const String.fromEnvironment(
+     'SUPABASE_URL', defaultValue: 'https://illterpnfexwzcxslxlw.supabase.co',
+   ),
+   anonKey: const String.fromEnvironment(
+     'SUPABASE_ANON_KEY',
+     defaultValue: 'sb_publishable_DCunfosBgOfmQ2S-eAJdMQ_N0nfvhG1',
+   ),
+ );
 
  runApp(EasyLocalization(
    supportedLocales: AppConstants.supportedLocales,
@@ -27,6 +36,7 @@ void main() async {
        BlocProvider(create: (_) => ThemeCubit()),
      ],
      child: MyApp(appRouter: AppRouter()),
+     
    ),
  ));
 }

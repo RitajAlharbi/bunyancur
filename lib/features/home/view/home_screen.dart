@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/widgets/app_bottom_nav.dart';
 import '../../../core/routing/routes.dart';
 import '../../create_project/presentation/screens/create_project_screen.dart';
+import '../../professionals/view/professional_profile_screen.dart';
 import '../controller/home_controller.dart';
 import '../model/home_item_model.dart';
 import 'widgets/filter_bar.dart';
@@ -25,6 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     controller = HomeController();
+    controller.loadProfile();
+    controller.loadProfessionals();
   }
 
   @override
@@ -45,10 +49,20 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           textDirection: TextDirection.rtl,
           children: [
-            Expanded(child: HomeItemCard(item: first)),
+            Expanded(
+              child: HomeItemCard(
+                item: first,
+                onTap: () => _navigateToProfile(first.id),
+              ),
+            ),
             SizedBox(width: 16.w),
             Expanded(
-              child: second != null ? HomeItemCard(item: second) : const SizedBox.shrink(),
+              child: second != null
+                  ? HomeItemCard(
+                      item: second,
+                      onTap: () => _navigateToProfile(second.id),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ],
         ),
@@ -58,6 +72,16 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return rows;
+  }
+
+  void _navigateToProfile(String professionalId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ProfessionalProfileScreen(
+          professionalId: professionalId,
+        ),
+      ),
+    );
   }
 
   @override
@@ -126,14 +150,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                'مرحبا صالح 👋',
+                                'مرحبا ${controller.firstName} 👋',
                                 style: GoogleFonts.cairo(
                                   fontSize: 16.sp,
                                   color: AppColor.grey600,
                                 ),
                               ),
                               Text(
-                                'صالح محمد',
+                                controller.fullName ?? '...',
                                 style: GoogleFonts.cairo(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.bold,
@@ -282,14 +306,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 16.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      children:
-                          _buildRecommendationRows(controller.filteredRecommendations),
+                  if (controller.isLoading)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24.h),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColor.orange900,
+                        ),
+                      ),
+                    )
+                  else if (controller.error != null)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                      child: Text(
+                        controller.error!,
+                        style: AppTextStyles.caption12.copyWith(
+                          color: Colors.red,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    )
+                  else ...[
+                    SizedBox(height: 16.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        children:
+                            _buildRecommendationRows(controller.filteredRecommendations),
+                      ),
                     ),
-                  ),
+                  ],
                   SizedBox(height: 90.h),
                 ],
               ),

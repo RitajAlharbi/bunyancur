@@ -15,6 +15,9 @@ import '../../features/market/product_details/models/product_details_model.dart'
 import '../../features/market/purchase_product/views/purchase_product_screen.dart';
 import '../../features/market/purchase_product/models/purchase_product_model.dart';
 import '../../features/client_orders/view/client_orders_screen.dart';
+import '../../features/auth/view/login_screen.dart';
+import '../../features/auth/view/signup_screen.dart';
+import '../../features/auth/view/forgot_password_screen.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -24,7 +27,10 @@ class AppRouter {
       case '/':
         return _createRoute(const SplashScreen());
       case Routes.roles:
-        return _createRoute(const RolesScreen());
+        final returnRoleOnSelect = settings.arguments == true;
+        return _createRoute(
+          RolesScreen(returnRoleOnSelect: returnRoleOnSelect),
+        );
       case Routes.onBoardingScreen:
         return _createRoute(const OnboardingScreen());
       case Routes.homeScreen:
@@ -46,9 +52,29 @@ class AppRouter {
         return _createRoute(PurchaseProductScreen(product: product));
       case Routes.messagesScreen:
         return _createRoute(const MessagesScreen());
-      case Routes.chatScreen:
-        final threadId = settings.arguments as String? ?? '';
-        return _createRoute(ChatScreen(threadId: threadId));
+      case Routes.chatScreen: {
+        String threadId = '';
+        String? displayName;
+        final args = settings.arguments;
+        if (args is Map<String, dynamic>) {
+          threadId = args['threadId'] as String? ?? '';
+          displayName = args['displayName'] as String?;
+        } else if (args is String) {
+          threadId = args;
+        }
+        return _createRoute(ChatScreen(
+          threadId: threadId,
+          displayName: displayName,
+        ));
+      }
+      case Routes.login:
+      case Routes.loginScreen:
+        return _createRoute(const LoginScreen());
+      case Routes.signup:
+      case Routes.signupScreen:
+        return _createRoute(const SignupScreen());
+      case Routes.forgotPassword:
+        return _createRoute(const ForgotPasswordScreen());
 
       default:
         return null;

@@ -7,8 +7,13 @@ import '../widgets/chat_bubble.dart';
 
 class ChatScreen extends StatefulWidget {
   final String threadId;
+  final String? displayName;
 
-  const ChatScreen({super.key, required this.threadId});
+  const ChatScreen({
+    super.key,
+    required this.threadId,
+    this.displayName,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -37,9 +42,22 @@ class _ChatScreenState extends State<ChatScreen> {
     textController.clear();
   }
 
+  String get _displayName {
+    final thread = controller.getThreadById(widget.threadId);
+    if (widget.displayName != null && widget.displayName!.isNotEmpty) {
+      return widget.displayName!;
+    }
+    return thread?.name ?? '';
+  }
+
+  String get _avatarInitial {
+    final name = _displayName;
+    if (name.isEmpty) return '';
+    return name.substring(0, 1).toUpperCase();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final thread = controller.getThreadById(widget.threadId);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -72,7 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            thread?.name ?? '',
+                            _displayName,
                             textAlign: TextAlign.right,
                             textDirection: TextDirection.rtl,
                             style: AppTextStyles.body.copyWith(
@@ -102,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          thread?.avatarInitial ?? '',
+                          _avatarInitial,
                           textAlign: TextAlign.center,
                           textDirection: TextDirection.rtl,
                           style: AppTextStyles.sectionTitle.copyWith(
@@ -120,6 +138,18 @@ class _ChatScreenState extends State<ChatScreen> {
                   animation: controller,
                   builder: (context, _) {
                     final messages = controller.messagesForThread(widget.threadId);
+                    if (messages.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'ابدأ الدردشة مع المقاول',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColor.grey600,
+                          ),
+                          textAlign: TextAlign.center,
+                          textDirection: TextDirection.rtl,
+                        ),
+                      );
+                    }
                     return ListView.builder(
                       reverse: true,
                       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),

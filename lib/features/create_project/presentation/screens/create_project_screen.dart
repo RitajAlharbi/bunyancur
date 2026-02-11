@@ -28,10 +28,11 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
   void initState() {
     super.initState();
     controller = CreateProjectController();
+    controller.loadProjectTypes('contractor');
     nameController =
-        TextEditingController(text: controller.data.projectName);
+        TextEditingController(text: controller.data.title);
     descriptionController =
-        TextEditingController(text: controller.data.projectDescription);
+        TextEditingController(text: controller.data.description);
   }
 
   @override
@@ -89,7 +90,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                     CreateProjectTextField(
                       controller: nameController,
                       hintText: 'اسم المشروع مطلوب',
-                      onChanged: controller.updateProjectName,
+                      onChanged: controller.setTitle,
                     ),
                     SizedBox(height: 16.h),
                     const CreateProjectSectionLabel(
@@ -97,12 +98,27 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                       isRequired: true,
                     ),
                     SizedBox(height: 8.h),
-                    CreateProjectDropdownField(
-                      hintText: 'اختر نوع مشروعك',
-                      value: controller.data.projectType,
-                      items: controller.projectTypes,
-                      onChanged: controller.updateProjectType,
-                    ),
+                    if (controller.isLoadingTypes)
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      CreateProjectDropdownField(
+                        hintText: 'اختر نوع مشروعك',
+                        value: controller.data.projectTypeName.isEmpty
+                            ? null
+                            : controller.data.projectTypeName,
+                        items: controller.projectTypeNames,
+                        onChanged: controller.setProjectTypeByName,
+                      ),
+                    if (controller.errorMessage != null &&
+                        controller.projectTypeNames.isEmpty) ...[
+                      SizedBox(height: 8.h),
+                      Text(
+                        controller.errorMessage!,
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.caption12
+                            .copyWith(color: AppColor.orange900),
+                      ),
+                    ],
                     SizedBox(height: 16.h),
                     const CreateProjectSectionLabel(
                       text: 'مساحة المشروع بالمتر المربع',
@@ -114,8 +130,8 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                         padding: EdgeInsets.only(bottom: 12.h),
                         child: CreateProjectRadioOption(
                           label: area,
-                          isSelected: controller.data.projectArea == area,
-                          onTap: () => controller.updateProjectArea(area),
+                          isSelected: controller.data.areaRange == area,
+                          onTap: () => controller.setAreaRange(area),
                         ),
                       );
                     }),
@@ -127,7 +143,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                       hintText: 'اكتب وصفاً تفصيلياً لمشروعك... (اختياري)',
                       minLines: 3,
                       maxLines: 5,
-                      onChanged: controller.updateProjectDescription,
+                      onChanged: controller.setDescription,
                     ),
                     SizedBox(height: 24.h),
                     CreateProjectPrimaryButton(

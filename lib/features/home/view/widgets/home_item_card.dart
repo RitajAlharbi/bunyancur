@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../model/home_item_model.dart';
 
 class HomeItemCard extends StatelessWidget {
   final HomeItemModel item;
+  final VoidCallback? onTap;
 
   const HomeItemCard({
     super.key,
     required this.item,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       width: 180.w,
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
@@ -37,17 +42,7 @@ class HomeItemCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.r),
-                child: item.imageUrl != null
-                    ? Image.asset(
-                        item.imageUrl!,
-                        width: double.infinity,
-                        height: 154.h,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildFallback();
-                        },
-                      )
-                    : _buildFallback(),
+                child: _buildImage(),
               ),
               Positioned(
                 top: 12.h,
@@ -71,7 +66,7 @@ class HomeItemCard extends StatelessWidget {
                       Icon(Icons.star, size: 10.sp, color: AppColor.orange900),
                       SizedBox(width: 4.w),
                       Text(
-                        item.rating.toString(),
+                        item.rating.toStringAsFixed(1),
                         style: GoogleFonts.cairo(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
@@ -124,6 +119,31 @@ class HomeItemCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
+    );
+  }
+
+  Widget _buildImage() {
+    final url = item.imageUrl;
+    if (url == null || url.isEmpty) {
+      return _buildFallback();
+    }
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        width: double.infinity,
+        height: 154.h,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => _buildFallback(),
+        errorWidget: (_, __, ___) => _buildFallback(),
+      );
+    }
+    return Image.asset(
+      url,
+      width: double.infinity,
+      height: 154.h,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => _buildFallback(),
     );
   }
 

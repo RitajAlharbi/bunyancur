@@ -129,31 +129,37 @@ class _CreateProjectLocationScreenState
                       hintText: 'مثال: الخرج، حي النخيل، شارع التخصصي',
                       onChanged: (value) {
                         if (_isSyncingText) return;
-                        widget.controller.updateAddress(value);
+                        widget.controller.setAddress(value);
                       },
                       prefixIcon: Icons.location_on_outlined,
                       onPrefixIconTap: _handleOpenMap,
                     ),
                     SizedBox(height: 16.h),
-                    const CreateProjectSectionLabel(text: 'المدينة'),
+                    const CreateProjectSectionLabel(
+                      text: 'المدينة',
+                      isRequired: true,
+                    ),
                     SizedBox(height: 8.h),
                     CreateProjectTextField(
                       controller: cityController,
                       hintText: 'الخرج',
                       onChanged: (value) {
                         if (_isSyncingText) return;
-                        widget.controller.updateCity(value);
+                        widget.controller.setCity(value);
                       },
                     ),
                     SizedBox(height: 16.h),
-                    const CreateProjectSectionLabel(text: 'الحي'),
+                    const CreateProjectSectionLabel(
+                      text: 'الحي',
+                      isRequired: true,
+                    ),
                     SizedBox(height: 8.h),
                     CreateProjectTextField(
                       controller: districtController,
                       hintText: 'النخيل',
                       onChanged: (value) {
                         if (_isSyncingText) return;
-                        widget.controller.updateDistrict(value);
+                        widget.controller.setDistrict(value);
                       },
                     ),
                     SizedBox(height: 20.h),
@@ -191,7 +197,7 @@ class _CreateProjectLocationScreenState
                         Expanded(
                           child: CreateProjectPrimaryButton(
                             label: 'التالي',
-                            onPressed: widget.controller.hasSelectedLocation
+                            onPressed: widget.controller.data.isLocationValid
                                 ? () {
                                     Navigator.push(
                                       context,

@@ -15,4 +15,9 @@ class Routes {
  static const String signupScreen = '/signupScreen';
  static const String homeScreen = '/homeScreen';
  static const String clientOrdersScreen = '/clientOrders';
+
+ static const String login = '/login';
+ static const String signup = '/signup';
+ static const String forgotPassword = '/forgot-password';
+ static const String clientHome = '/homeScreen';
 }

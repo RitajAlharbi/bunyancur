@@ -1,4 +1,5 @@
 class HomeItemModel {
+  final String id;
   final String name;
   final String location;
   final double rating;
@@ -6,6 +7,7 @@ class HomeItemModel {
   final HomeItemType type;
 
   const HomeItemModel({
+    required this.id,
     required this.name,
     required this.location,
     required this.rating,

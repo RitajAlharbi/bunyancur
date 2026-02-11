@@ -85,10 +85,11 @@ class MessagesController extends ChangeNotifier {
   List<MessageThreadModel> get threads => List.unmodifiable(_threads);
 
   MessageThreadModel? getThreadById(String threadId) {
-    return _threads.firstWhere(
-      (thread) => thread.id == threadId,
-      orElse: () => _threads.first,
-    );
+    try {
+      return _threads.firstWhere((thread) => thread.id == threadId);
+    } catch (_) {
+      return null;
+    }
   }
 
   List<ChatMessageModel> messagesForThread(String threadId) {

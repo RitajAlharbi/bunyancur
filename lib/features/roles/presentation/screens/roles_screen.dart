@@ -8,7 +8,9 @@ import '../../controllers/roles_controller.dart';
 import '../../models/role_type.dart';
 
 class RolesScreen extends StatefulWidget {
-  const RolesScreen({super.key});
+  final bool returnRoleOnSelect;
+
+  const RolesScreen({super.key, this.returnRoleOnSelect = false});
 
   @override
   State<RolesScreen> createState() => _RolesScreenState();
@@ -30,8 +32,12 @@ class _RolesScreenState extends State<RolesScreen> {
   }
 
   void _handleRole(RoleType role) {
-    controller.onRoleSelected(role);
-    Navigator.pushReplacementNamed(context, Routes.homeScreen);
+    if (widget.returnRoleOnSelect) {
+      Navigator.pop(context, role.name);
+    } else {
+      controller.onRoleSelected(role);
+      Navigator.pushReplacementNamed(context, Routes.homeScreen);
+    }
   }
 
   @override

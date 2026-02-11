@@ -11,13 +11,42 @@ import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_summary_row.dart';
 import '../widgets/create_project_upload_area.dart';
 
-class CreateProjectUploadSummaryScreen extends StatelessWidget {
+class CreateProjectUploadSummaryScreen extends StatefulWidget {
   final CreateProjectController controller;
 
   const CreateProjectUploadSummaryScreen({
     super.key,
     required this.controller,
   });
+
+  @override
+  State<CreateProjectUploadSummaryScreen> createState() =>
+      _CreateProjectUploadSummaryScreenState();
+}
+
+class _CreateProjectUploadSummaryScreenState
+    extends State<CreateProjectUploadSummaryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.loadRecommendedProviders(
+      type: 'contractor',
+      city: widget.controller.data.city,
+    );
+  }
+
+  Future<void> _handleSubmit() async {
+    final projectId = await widget.controller.submitProjectAndSendRequests();
+    if (!mounted) return;
+
+    if (projectId != null) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      return;
+    }
+
+    final message = widget.controller.errorMessage ?? 'تعذر إنشاء المشروع';
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +56,7 @@ class CreateProjectUploadSummaryScreen extends StatelessWidget {
         backgroundColor: AppColor.white,
         body: SafeArea(
           child: AnimatedBuilder(
-            animation: controller,
+            animation: widget.controller,
             builder: (context, _) {
               return SingleChildScrollView(
                 padding: EdgeInsets.only(
@@ -63,9 +92,9 @@ class CreateProjectUploadSummaryScreen extends StatelessWidget {
                       titleIcon: Icons.image_outlined,
                       actionText: 'انقر لرفع الصور',
                       allowedTypesText: '(حتى 10 صور) JPG, PNG',
-                      isEmpty: controller.projectImages.isEmpty,
-                      onTap: controller.pickProjectImages,
-                      content: _SelectedImagesGrid(controller: controller),
+                      isEmpty: widget.controller.projectImages.isEmpty,
+                      onTap: widget.controller.pickProjectImages,
+                      content: _SelectedImagesGrid(controller: widget.controller),
                     ),
                     SizedBox(height: 16.h),
                     CreateProjectUploadArea(
@@ -73,16 +102,36 @@ class CreateProjectUploadSummaryScreen extends StatelessWidget {
                       titleIcon: Icons.description_outlined,
                       actionText: 'انقر لرفع المخططات',
                       allowedTypesText: 'PDF, DWG, JPG',
-                      isEmpty: controller.projectFiles.isEmpty,
-                      onTap: controller.pickProjectFiles,
-                      content: _SelectedFilesList(controller: controller),
+                      isEmpty: widget.controller.projectFiles.isEmpty,
+                      onTap: widget.controller.pickProjectFiles,
+                      content: _SelectedFilesList(controller: widget.controller),
                     ),
                     SizedBox(height: 20.h),
-                    _SummaryCard(controller: controller),
+                    _SummaryCard(controller: widget.controller),
                     SizedBox(height: 20.h),
+                    _ProvidersSection(controller: widget.controller),
+                    if (widget.controller.errorMessage != null) ...[
+                      SizedBox(height: 8.h),
+                      Text(
+                        widget.controller.errorMessage!,
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.caption12
+                            .copyWith(color: AppColor.orange900),
+                      ),
+                    ],
+                    SizedBox(height: 20.h),
+                    if (widget.controller.isSubmitting)
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
                     CreateProjectPrimaryButton(
-                      label: 'إنشاء المشروع',
-                      onPressed: controller.isStep4Valid ? () {} : null,
+                      label: widget.controller.isSubmitting
+                          ? 'جاري إنشاء المشروع...'
+                          : 'إنشاء المشروع',
+                      onPressed: widget.controller.canSubmit && !widget.controller.isSubmitting
+                          ? _handleSubmit
+                          : null,
                     ),
                     SizedBox(height: 10.h),
                     Text(
@@ -96,6 +145,86 @@ class CreateProjectUploadSummaryScreen extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ProvidersSection extends StatelessWidget {
+  final CreateProjectController controller;
+
+  const _ProvidersSection({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColor.grey100,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: AppColor.grey200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'مقاولون مقترحون',
+            textAlign: TextAlign.right,
+            style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: 6.h),
+          Text(
+            'اختر المقاولين الذين تريد إرسال طلب الخدمة لهم (اختياري)',
+            textAlign: TextAlign.right,
+            style: AppTextStyles.caption12,
+          ),
+          SizedBox(height: 12.h),
+          if (controller.isLoadingProviders)
+            const Center(child: CircularProgressIndicator())
+          else if (controller.recommendedProviders.isEmpty)
+            Text(
+              'لا توجد نتائج حالياً',
+              textAlign: TextAlign.right,
+              style: AppTextStyles.caption12,
+            )
+          else
+            Column(
+              children: controller.recommendedProviders.map((provider) {
+                final selected =
+                    controller.data.selectedProviderIds.contains(provider.id);
+                return Container(
+                  margin: EdgeInsets.only(bottom: 8.h),
+                  decoration: BoxDecoration(
+                    color: AppColor.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: AppColor.grey200),
+                  ),
+                  child: CheckboxListTile(
+                    value: selected,
+                    onChanged: (_) =>
+                        controller.toggleProviderSelection(provider.id),
+                    side: BorderSide(color: AppColor.grey200),
+                    activeColor: AppColor.orange900,
+                    title: Text(
+                      provider.displayName.isEmpty
+                          ? 'مقاول بدون اسم'
+                          : provider.displayName,
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.body,
+                    ),
+                    subtitle: Text(
+                      '${provider.city} - ${provider.avgRating.toStringAsFixed(1)} (${provider.reviewsCount})',
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.caption12,
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+                  ),
+                );
+              }).toList(),
+            ),
+        ],
       ),
     );
   }

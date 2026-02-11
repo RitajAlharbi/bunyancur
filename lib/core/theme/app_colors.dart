@@ -15,7 +15,21 @@ class AppColor {
  static const Color grey500 = Color(0xff9E9E9E);
  static const Color grey600 = Color(0xff757575);
  static const Color grey700 = Color(0xff616161);
+ static const Color darkText = Color(0xFF111827);
+ static const Color secondaryText = Color(0xFF6B7280);
+ static const Color placeholderText = Color(0x7F111726);
 
  static const Color gradientStart = Color(0x4DFFDCC2);
  static const Color gradientEnd = Color(0xFFFFFFFF);
+
+ // Figma professional profile
+ static const Color borderLight = Color(0xFFE5E7EB);
+ static const Color tabInactiveText = Color(0xFF4A5565);
+ static const Color bioText = Color(0xFF3A3A3A);
+ static const Color headingDark = Color(0xFF101828);
+ static const Color shadowLight = Color(0x0C000000);
+ static const Color shadowMedium = Color(0x19000000);
+ static const Color productNameText = Color(0xFF3B3B3B);
+ static const Color companyNameText = Color(0xFF8C8C8C);
+ static const Color imagePlaceholderBg = Color(0xFFF8F8F8);
 }
