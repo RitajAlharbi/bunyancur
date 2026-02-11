@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../create_project/models/create_project_form_data.dart';
+import '../model/offer_vm.dart';
 import '../model/order_vm.dart';
 import '../model/stage_vm.dart';
 import '../view/project_dashboard_screen.dart';
@@ -7,11 +9,95 @@ class ClientController extends ChangeNotifier {
   /// 0 = نشط, 1 = قيد الانتظار, 2 = مكتمل
   int _selectedTabIndex = 0;
 
+  /// Order IDs whose offers section is expanded.
+  final Set<String> _expandedOrderIds = {};
+
   int get selectedTabIndex => _selectedTabIndex;
+
+  bool isOffersExpanded(String orderId) => _expandedOrderIds.contains(orderId);
+
+  void toggleOffersExpanded(String orderId) {
+    if (_expandedOrderIds.contains(orderId)) {
+      _expandedOrderIds.remove(orderId);
+    } else {
+      _expandedOrderIds.add(orderId);
+    }
+    notifyListeners();
+  }
 
   void setTab(int index) {
     if (index == _selectedTabIndex) return;
     _selectedTabIndex = index;
+    notifyListeners();
+  }
+
+  void setInitialTab(int index) {
+    _selectedTabIndex = index;
+    notifyListeners();
+  }
+
+  String _projectTypeToKey(String? type) {
+    if (type == null) return 'fullBuild';
+    switch (type) {
+      case 'الكهرباء':
+        return 'electricity';
+      case 'السباكة':
+        return 'plumbing';
+      case 'ديكور وتشطيب':
+      case 'تجديد المطبخ':
+        return 'decorFinishing';
+      case 'أعمال الأساسات':
+        return 'foundations';
+      default:
+        return 'fullBuild';
+    }
+  }
+
+  String _formatBudget(CreateProjectFormData data) {
+    if (data.budgetRange != null && data.budgetRange != 'تحديد مبلغ آخر') {
+      return data.budgetRange!;
+    }
+    if (data.customBudgetAmount != null) {
+      final digits = data.customBudgetAmount.toString();
+      final buffer = StringBuffer();
+      for (var i = 0; i < digits.length; i++) {
+        final positionFromEnd = digits.length - i;
+        buffer.write(digits[i]);
+        if (positionFromEnd > 1 && positionFromEnd % 3 == 1) {
+          buffer.write(',');
+        }
+      }
+      return '${buffer.toString()} ريال';
+    }
+    return '-';
+  }
+
+  void addPendingOrderFromFormData(CreateProjectFormData data) {
+    final now = DateTime.now();
+    final id = 'new-${now.millisecondsSinceEpoch}';
+    final orderNumber = 'BN-${now.year}-${(now.millisecondsSinceEpoch % 10000).toString().padLeft(4, '0')}';
+    final dateStr = '${now.year}/${now.month.toString().padLeft(2, '0')}/${now.day.toString().padLeft(2, '0')}';
+
+    final order = OrderVM(
+      id: id,
+      orderId: id,
+      projectId: id,
+      title: data.projectName.trim().isEmpty ? 'مشروع جديد' : data.projectName.trim(),
+      projectName: data.projectName.trim().isEmpty ? 'مشروع جديد' : data.projectName.trim(),
+      projectTypeKey: _projectTypeToKey(data.projectType),
+      status: OrderStatus.pending,
+      dateLabel: 'تاريخ العرض',
+      dateValue: dateStr,
+      personLabel: '',
+      personValue: '-',
+      price: _formatBudget(data),
+      orderNumber: orderNumber,
+      progressPercent: 0,
+      offers: [],
+    );
+
+    pendingOrders.insert(0, order);
+    _selectedTabIndex = 1;
     notifyListeners();
   }
 
@@ -182,6 +268,15 @@ class ClientController extends ChangeNotifier {
       price: 'أكثر من 500,000 ريال',
       orderNumber: 'BN-2025-1521',
       progressPercent: 0,
+      offers: [
+        const OfferVM(
+          id: 'o1',
+          contractorName: 'محمد عبدالعزيز',
+          offerPrice: '520,000 ريال',
+          duration: '4 أشهر',
+          shortDescription: 'عرض شامل للترميم يشمل الكهرباء والسباكة والدهانات',
+        ),
+      ],
     ),
   ];
 

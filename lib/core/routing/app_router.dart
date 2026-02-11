@@ -19,6 +19,7 @@ import '../../features/admin/views/admin_dashboard_screen.dart';
 import '../../features/auth/views/login_screen.dart';
 import '../../features/roles/models/role_type.dart';
 import '../../features/client_orders/view/client_orders_screen.dart';
+import '../../features/profile/view/profile_settings_screen.dart';
 
 class AppRouter {
   Route? generateRoute(RouteSettings settings) {
@@ -35,6 +36,8 @@ class AppRouter {
         return _createRoute(const HomeScreen());
       case Routes.clientOrdersScreen:
         return _createRoute(const ClientOrdersScreen());
+      case Routes.profileSettingsScreen:
+        return _createRoute(const ProfileSettingsScreen());
       case Routes.marketScreen:
         return _createRoute(const MarketScreen());
       case Routes.addProduct:

@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_bottom_nav.dart';
 import '../../../core/routing/routes.dart';
 import '../../create_project/view/create_project_screen.dart';
+import '../../create_project/view/create_designer_project_screen.dart';
 import '../controller/home_controller.dart';
 import '../model/home_item_model.dart';
 import 'widgets/filter_bar.dart';
@@ -237,6 +238,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: _ServiceCard(
                             title: 'إنشاء طلب مصمم داخلي',
                             imageUrl: 'assets/images/service1.png',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const CreateDesignerProjectScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ),
                         SizedBox(width: 16.w),
@@ -314,6 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return;
           }
           if (index == 4) {
+            Navigator.pushNamed(context, Routes.profileSettingsScreen);
             return;
           }
         },

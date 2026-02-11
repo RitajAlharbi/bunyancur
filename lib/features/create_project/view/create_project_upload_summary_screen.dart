@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/routing/routes.dart';
+import '../../client_orders/model/client_orders_route_args.dart';
 import '../controllers/create_project_controller.dart';
 import '../widgets/create_project_header.dart';
 import '../widgets/create_project_primary_button.dart';
@@ -82,7 +84,19 @@ class CreateProjectUploadSummaryScreen extends StatelessWidget {
                     SizedBox(height: 20.h),
                     CreateProjectPrimaryButton(
                       label: 'إنشاء المشروع',
-                      onPressed: controller.isStep4Valid ? () {} : null,
+                      onPressed: controller.isStep4Valid
+                          ? () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                Routes.clientOrdersScreen,
+                                (route) => false,
+                                arguments: ClientOrdersRouteArgs(
+                                  initialTabIndex: 1,
+                                  formData: controller.data,
+                                ),
+                              );
+                            }
+                          : null,
                     ),
                     SizedBox(height: 10.h),
                     Text(

@@ -3,24 +3,29 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../model/order_vm.dart';
+import 'offer_card.dart';
 
 class OrderCard extends StatelessWidget {
   final OrderVM order;
+  final bool isOffersExpanded;
   final VoidCallback? onDetails;
   final VoidCallback? onOpenDashboard;
   final VoidCallback? onViewDescription;
-  final VoidCallback? onAccept;
-  final VoidCallback? onDecline;
+  final VoidCallback? onToggleOffers;
+  final VoidCallback? onOfferAccept;
+  final VoidCallback? onOfferReject;
   final VoidCallback? onRate;
 
   const OrderCard({
     super.key,
     required this.order,
+    this.isOffersExpanded = false,
     this.onDetails,
     this.onOpenDashboard,
     this.onViewDescription,
-    this.onAccept,
-    this.onDecline,
+    this.onToggleOffers,
+    this.onOfferAccept,
+    this.onOfferReject,
     this.onRate,
   });
 
@@ -233,7 +238,7 @@ class OrderCard extends StatelessWidget {
                 _FilledButton(label: 'لوحة المتابعة', onPressed: onOpenDashboard ?? () {}),
                 _OutlinedButton(label: 'عرض التفاصيل', onPressed: onDetails ?? () {}),
               ] else if (isPending) ...[
-                _FilledButton(label: 'قبول', onPressed: onAccept ?? () {}),
+                _FilledButton(label: 'العروض المقدمة', onPressed: onToggleOffers ?? () {}),
                 _OutlinedButton(label: 'عرض الوصف', onPressed: onViewDescription ?? () {}),
               ] else if (isCompleted) ...[
                 _FilledButton(label: 'تقييم', onPressed: onRate ?? () {}),
@@ -241,20 +246,26 @@ class OrderCard extends StatelessWidget {
               ],
             ],
           ),
-          if (isPending) ...[
-            SizedBox(height: 8.h),
-            GestureDetector(
-              onTap: onDecline ?? () {},
-              child: Text(
-                'رفض الطلب',
-                style: AppTextStyles.body.copyWith(
-                  color: const Color(0xFF697282),
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
+          if (isPending && isOffersExpanded) ...[
+            if (order.offers.isEmpty)
+              Padding(
+                padding: EdgeInsets.only(top: 12.h),
+                child: Text(
+                  'لم تظهر عروض بعد',
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.body.copyWith(
+                    color: AppColor.grey500,
+                    fontSize: 14.sp,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+              )
+            else
+              for (final offer in order.offers)
+                OfferCard(
+                  offer: offer,
+                  onAccept: onOfferAccept,
+                  onReject: onOfferReject,
+                ),
           ],
         ],
       ),
