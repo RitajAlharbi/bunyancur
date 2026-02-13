@@ -8,6 +8,8 @@ class Routes {
  static const String productAddedSuccess = '/productAddedSuccess';
  static const String productDetails = '/productDetails';
  static const String purchaseProduct = '/purchaseProduct';
+ static const String orderSuccess = '/orderSuccess';
+ static const String productReview = '/productReview';
 
  static const String splashScreen = '/splashScreen';
  static const String onBoardingScreen = '/onBoardingScreen';

@@ -118,8 +118,7 @@ class _CreateProjectBudgetTimelineScreenState
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) =>
-                                            CreateProjectUploadSummaryScreen(
+                                        builder: (_) => CreateProjectUploadSummaryScreen(
                                           controller: widget.controller,
                                         ),
                                       ),

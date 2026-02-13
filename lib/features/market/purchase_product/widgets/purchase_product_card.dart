@@ -12,63 +12,105 @@ class PurchaseProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imagePath = product.imageUrl;
+    final isRemote = imagePath.startsWith('http');
     return Container(
       width: double.infinity,
+      height: 133.h,
       padding: EdgeInsetsDirectional.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         color: AppColor.white,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
-            color: AppColor.black.withValues(alpha: 0.05),
-            blurRadius: 8,
+            color: const Color(0x0C000000),
+            blurRadius: 8.r,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
+        textDirection: TextDirection.rtl,
         children: [
+          Container(
+            width: 100.w,
+            height: 100.h,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: AppColor.grey100,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: isRemote
+                ? Image.network(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(color: AppColor.grey100),
+                  )
+                : Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                  ),
+          ),
+          SizedBox(width: 12.w),
           Expanded(
             child: SizedBox(
-              height: 100.h,
+              height: 101.h,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    product.title,
-                    textAlign: TextAlign.right,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColor.black,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      product.title,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.body.copyWith(
+                        color: const Color(0xFF3B3B3B),
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        height: 1.5,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    product.priceLabel,
-                    textAlign: TextAlign.right,
-                    style: AppTextStyles.price.copyWith(fontSize: 18.sp),
-                  ),
-                  SizedBox(height: 6.h),
-                  Text(
-                    'البائع: ${product.sellerName}',
-                    textAlign: TextAlign.right,
-                    style: AppTextStyles.caption12.copyWith(
-                      color: AppColor.grey600,
+                  SizedBox(height: 4.h),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      product.priceLabel,
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.price.copyWith(
+                        color: const Color(0xFFAF5500),
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                        height: 1.5,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 4.h),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      'البائع: ${product.sellerName}',
+                      textAlign: TextAlign.right,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.caption12.copyWith(
+                        color: const Color(0xFF8C8C8C),
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w400,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
                   Row(
+                    textDirection: TextDirection.rtl,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        product.rating.toStringAsFixed(1),
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.caption12.copyWith(
-                          color: AppColor.orange900,
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
                       SvgPicture.asset(
                         'assets/icons/Iconstart.svg',
                         width: 14.w,
@@ -78,24 +120,21 @@ class PurchaseProductCard extends StatelessWidget {
                           BlendMode.srcIn,
                         ),
                       ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        product.rating.toStringAsFixed(1),
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.caption12.copyWith(
+                          color: const Color(0xFFC8A66A),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          height: 1.5,
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Container(
-            width: 100.w,
-            height: 100.h,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: AppColor.grey100,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Image.asset(
-              product.imageUrl,
-              fit: BoxFit.cover,
             ),
           ),
         ],

@@ -38,19 +38,25 @@ class AttachmentCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    attachmentName ?? 'إضافة مرفق أو شهادة ضمان',
-                    textAlign: TextAlign.right,
-                    style: AppTextStyles.body.copyWith(
-                      color: AppColor.orange900,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      attachmentName ?? 'إضافة مرفق أو شهادة ضمان',
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColor.orange900,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  Text(
-                    attachmentName ?? 'صورة أو PDF',
-                    textAlign: TextAlign.right,
-                    style: AppTextStyles.caption12,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      attachmentName == null ? 'صورة أو PDF' : 'اضغط للحذف',
+                      textAlign: TextAlign.right,
+                      style: AppTextStyles.caption12,
+                    ),
                   ),
                 ],
               ),

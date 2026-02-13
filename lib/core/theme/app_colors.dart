@@ -35,4 +35,12 @@ class AppColor {
  static const Color productNameText = Color(0xFF3B3B3B);
  static const Color companyNameText = Color(0xFF8C8C8C);
  static const Color imagePlaceholderBg = Color(0xFFF8F8F8);
+
+ // Success states
+ static const Color success500 = Color(0xFF22C55E);
+ static const Color success600 = Color(0xFF16A34A);
+ static const Color success100 = Color(0x3322C55E);
+ static const Color successBorder = Color(0xFF10B981);
+ static const Color slate700 = Color(0xFF354152);
+ static const Color slate500 = Color(0xFF697282);
 }

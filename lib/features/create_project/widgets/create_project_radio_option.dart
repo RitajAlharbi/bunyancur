@@ -19,38 +19,42 @@ class CreateProjectRadioOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(14.r),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         decoration: BoxDecoration(
           color: AppColor.white,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: AppColor.grey200),
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(
+            color: isSelected ? AppColor.orange900 : AppColor.grey200,
+            width: isSelected ? 1.5 : 1,
+          ),
         ),
         child: Row(
           children: [
             Container(
               width: 20.w,
-              height: 20.h,
+              height: 20.w,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColor.orange900),
-                color: isSelected ? AppColor.orange900 : AppColor.white,
+                border: Border.all(
+                  color: isSelected ? AppColor.orange900 : AppColor.grey400,
+                ),
               ),
               child: isSelected
                   ? Center(
                       child: Container(
-                        width: 6.w,
-                        height: 6.h,
-                        decoration: BoxDecoration(
-                          color: AppColor.white,
+                        width: 10.w,
+                        height: 10.w,
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
+                          color: AppColor.orange900,
                         ),
                       ),
                     )
                   : null,
             ),
-            SizedBox(width: 12.w),
+            SizedBox(width: 10.w),
             Expanded(
               child: Text(
                 label,

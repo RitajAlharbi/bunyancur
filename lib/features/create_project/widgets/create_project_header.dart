@@ -16,17 +16,17 @@ class CreateProjectHeader extends StatelessWidget {
     return Row(
       children: [
         IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColor.orange900, size: 22.sp),
           onPressed: () => Navigator.maybePop(context),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18.sp),
+          color: AppColor.grey700,
         ),
         Expanded(
           child: Text(
             title,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.right,
             style: AppTextStyles.title,
           ),
         ),
-        SizedBox(width: 40.w),
       ],
     );
   }

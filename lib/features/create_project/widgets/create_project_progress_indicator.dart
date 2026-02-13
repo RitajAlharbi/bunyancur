@@ -16,14 +16,15 @@ class CreateProjectProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: List.generate(totalSteps, (index) {
-        final isActive = index < currentStep;
+        final step = index + 1;
+        final active = step <= currentStep;
         return Expanded(
           child: Container(
-            height: 4.h,
-            margin: EdgeInsets.symmetric(horizontal: 4.w),
+            margin: EdgeInsets.symmetric(horizontal: 3.w),
+            height: 6.h,
             decoration: BoxDecoration(
-              color: isActive ? AppColor.orange900 : AppColor.grey200,
-              borderRadius: BorderRadius.circular(100.r),
+              color: active ? AppColor.orange900 : AppColor.grey200,
+              borderRadius: BorderRadius.circular(99.r),
             ),
           ),
         );

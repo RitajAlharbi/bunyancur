@@ -51,9 +51,7 @@ class _CreateProjectLocationMapScreenState
         nextTemp ??= target;
         if (!_hasCenteredOnUser && _mapController != null) {
           _hasCenteredOnUser = true;
-          _mapController!.animateCamera(
-            CameraUpdate.newLatLngZoom(target, 16),
-          );
+          _mapController!.animateCamera(CameraUpdate.newLatLngZoom(target, 16));
         }
       }
     }
@@ -109,24 +107,13 @@ class _CreateProjectLocationMapScreenState
                         child: widget.controller.isFetchingLocation
                             ? const CircularProgressIndicator()
                             : Text(
-                                widget.controller.locationError ??
-                                    'تعذر تحميل الخريطة',
-                                style: AppTextStyles.caption12.copyWith(
-                                  color: AppColor.orange900,
-                                ),
+                                widget.controller.locationError ?? 'تعذر تحميل الخريطة',
+                                style: AppTextStyles.caption12
+                                    .copyWith(color: AppColor.orange900),
                                 textAlign: TextAlign.center,
                               ),
                       );
                     }
-
-                    final markers = <Marker>{
-                      Marker(
-                        markerId: const MarkerId('selected-location'),
-                        position: selected,
-                        draggable: true,
-                        onDragEnd: _handleSelection,
-                      ),
-                    };
 
                     return Stack(
                       children: [
@@ -140,16 +127,20 @@ class _CreateProjectLocationMapScreenState
                             _mapController = controller;
                             _handleControllerUpdate();
                           },
-                          myLocationEnabled:
-                              widget.controller.hasLocationPermission,
+                          myLocationEnabled: widget.controller.hasLocationPermission,
                           myLocationButtonEnabled: false,
-                          markers: markers,
+                          markers: <Marker>{
+                            Marker(
+                              markerId: const MarkerId('selected-location'),
+                              position: selected,
+                              draggable: true,
+                              onDragEnd: _handleSelection,
+                            ),
+                          },
                           onTap: _handleSelection,
                         ),
                         if (widget.controller.isFetchingLocation)
-                          const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                          const Center(child: CircularProgressIndicator()),
                       ],
                     );
                   },
@@ -159,9 +150,7 @@ class _CreateProjectLocationMapScreenState
                 padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 24.h),
                 child: CreateProjectPrimaryButton(
                   label: 'تأكيد الموقع',
-                  onPressed: _tempSelectedLatLng == null
-                      ? null
-                      : _confirmSelection,
+                  onPressed: _tempSelectedLatLng == null ? null : _confirmSelection,
                 ),
               ),
             ],

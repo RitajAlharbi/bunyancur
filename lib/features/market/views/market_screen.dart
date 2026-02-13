@@ -26,6 +26,7 @@ class _MarketScreenState extends State<MarketScreen> {
   void initState() {
     super.initState();
     controller = MarketController();
+    controller.init();
   }
 
   @override
@@ -39,15 +40,15 @@ class _MarketScreenState extends State<MarketScreen> {
       context,
       Routes.productDetails,
       arguments: ProductDetailsModel(
+        productId: product.id,
         title: product.title,
         categoryLabel: product.category.labelAr,
-        description:
-            'سقالات كورية متكاملة بجودة عالية وسهولة في التركيب، مناسبة لجميع أنواع المشاريع الإنشائية.',
-        quantityLabel: '10 قطع',
-        city: 'الرياض',
-        priceLabel: '${product.price.toStringAsFixed(0)} ريال',
+        description: product.description,
+        stockQtyNullable: product.stockQty,
+        city: product.city.isEmpty ? 'الرياض' : product.city,
+        price: product.price,
         imageUrl: product.imageUrl,
-        sellerName: product.sellerName,
+        sellerNameNullable: product.sellerName,
         sellerRole: 'مقاول معتمد',
         sellerAvatar: 'assets/icons/avatar.png',
       ),
@@ -179,34 +180,16 @@ class _MarketScreenState extends State<MarketScreen> {
                           Wrap(
                             spacing: 12.w,
                             runSpacing: 12.h,
-                            children: [
-                              CategoryChip(
-                                label: 'الكل',
-                                isActive: controller.selectedCategory == 'الكل',
-                                onTap: () => controller.selectCategory('الكل'),
-                              ),
-                              CategoryChip(
-                                label: ProductCategory.iron.labelAr,
-                                isActive: controller.selectedCategory ==
-                                    ProductCategory.iron.labelAr,
-                                onTap: () => controller
-                                    .selectCategory(ProductCategory.iron.labelAr),
-                              ),
-                              CategoryChip(
-                                label: ProductCategory.wood.labelAr,
-                                isActive: controller.selectedCategory ==
-                                    ProductCategory.wood.labelAr,
-                                onTap: () => controller
-                                    .selectCategory(ProductCategory.wood.labelAr),
-                              ),
-                              CategoryChip(
-                                label: ProductCategory.tile.labelAr,
-                                isActive: controller.selectedCategory ==
-                                    ProductCategory.tile.labelAr,
-                                onTap: () => controller
-                                    .selectCategory(ProductCategory.tile.labelAr),
-                              ),
-                            ],
+                            children: controller.categories
+                                .map(
+                                  (category) => CategoryChip(
+                                    label: category.label,
+                                    isActive:
+                                        controller.selectedCategoryId == category.id,
+                                    onTap: () => controller.setCategory(category.id),
+                                  ),
+                                )
+                                .toList(),
                           ),
                           SizedBox(height: 20.h),
                           Row(
@@ -389,45 +372,17 @@ class _MarketScreenState extends State<MarketScreen> {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: [
-                            CategoryChip(
-                              label: 'الكل',
-                              isActive: controller.selectedCategory == 'الكل',
-                              onTap: () => controller.selectCategory('الكل'),
-                            ),
-                            SizedBox(width: 10.w),
-                            CategoryChip(
-                              label: ProductCategory.iron.labelAr,
-                              isActive: controller.selectedCategory ==
-                                  ProductCategory.iron.labelAr,
-                              onTap: () => controller
-                                  .selectCategory(ProductCategory.iron.labelAr),
-                            ),
-                            SizedBox(width: 10.w),
-                            CategoryChip(
-                              label: ProductCategory.wood.labelAr,
-                              isActive: controller.selectedCategory ==
-                                  ProductCategory.wood.labelAr,
-                              onTap: () => controller
-                                  .selectCategory(ProductCategory.wood.labelAr),
-                            ),
-                            SizedBox(width: 10.w),
-                            CategoryChip(
-                              label: ProductCategory.tile.labelAr,
-                              isActive: controller.selectedCategory ==
-                                  ProductCategory.tile.labelAr,
-                              onTap: () => controller
-                                  .selectCategory(ProductCategory.tile.labelAr),
-                            ),
-                            SizedBox(width: 10.w),
-                            CategoryChip(
-                              label: ProductCategory.other.labelAr,
-                              isActive: controller.selectedCategory ==
-                                  ProductCategory.other.labelAr,
-                              onTap: () => controller
-                                  .selectCategory(ProductCategory.other.labelAr),
-                            ),
-                          ],
+                          children: controller.categories
+                              .expand((category) => [
+                                    CategoryChip(
+                                      label: category.label,
+                                      isActive:
+                                          controller.selectedCategoryId == category.id,
+                                      onTap: () => controller.setCategory(category.id),
+                                    ),
+                                    SizedBox(width: 10.w),
+                                  ])
+                              .toList(),
                         ),
                       ),
                     ),
@@ -435,28 +390,39 @@ class _MarketScreenState extends State<MarketScreen> {
                     Padding(
                       padding:
                           EdgeInsets.fromLTRB(24.w, 0, 24.w, 110.h),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.filteredProducts.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.w,
-                          mainAxisSpacing: 16.h,
-                          childAspectRatio: 0.58,
-                        ),
-                        itemBuilder: (context, index) {
-                          final product = controller.filteredProducts[index];
-                          return GestureDetector(
-                            onTap: () => _openProductDetails(product),
-                            child: ProductCard(
-                              product: product,
-                              onFavoriteTap: () =>
-                                  controller.toggleFavorite(product.id),
-                            ),
-                          );
-                        },
-                      ),
+                      child: controller.isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : controller.error != null
+                              ? Center(
+                                  child: Text(
+                                    'تعذر تحميل المنتجات',
+                                    style: AppTextStyles.body.copyWith(
+                                      color: AppColor.grey600,
+                                    ),
+                                  ),
+                                )
+                              : GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: controller.filteredProducts.length,
+                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    crossAxisSpacing: 16.w,
+                                    mainAxisSpacing: 16.h,
+                                    childAspectRatio: 0.58,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    final product = controller.filteredProducts[index];
+                                    return GestureDetector(
+                                      onTap: () => _openProductDetails(product),
+                                      child: ProductCard(
+                                        product: product,
+                                        onFavoriteTap: () =>
+                                            controller.toggleFavorite(product.id),
+                                      ),
+                                    );
+                                  },
+                                ),
                     ),
                     SizedBox(height: 12.h),
                   ],

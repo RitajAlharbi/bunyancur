@@ -37,27 +37,34 @@ class PaymentOptionTile extends StatelessWidget {
             ),
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     SizedBox(height: 12.h),
-                    Text(
-                      label,
-                      textAlign: TextAlign.right,
-                      style: AppTextStyles.body.copyWith(
-                        color: AppColor.grey600,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColor.grey600,
+                        ),
                       ),
                     ),
                     if (helperText != null) ...[
                       SizedBox(height: 2.h),
-                      Text(
-                        helperText!,
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.caption12.copyWith(
-                          color: AppColor.grey400,
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          helperText!,
+                          textAlign: TextAlign.right,
+                          style: AppTextStyles.caption12.copyWith(
+                            color: AppColor.grey400,
+                          ),
                         ),
                       ),
                       SizedBox(height: 12.h),
@@ -66,6 +73,7 @@ class PaymentOptionTile extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(width: 12.w),
               Container(
                 width: 20.w,
                 height: 20.h,

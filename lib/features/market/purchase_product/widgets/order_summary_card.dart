@@ -27,39 +27,48 @@ class OrderSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            'ملخص الطلب',
-            textAlign: TextAlign.right,
-            style: AppTextStyles.body.copyWith(
-              color: AppColor.grey600,
-              fontWeight: FontWeight.bold,
+          SizedBox(
+            width: double.infinity,
+            child: Text(
+              'ملخص الطلب',
+              textAlign: TextAlign.right,
+              style: AppTextStyles.body.copyWith(
+                color: AppColor.grey600,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           SizedBox(height: 12.h),
           Row(
+            textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                basePrice,
-                style: AppTextStyles.body.copyWith(color: AppColor.grey600),
-              ),
-              const Spacer(),
               Text(
                 'السعر الأساسي',
                 style: AppTextStyles.body.copyWith(color: AppColor.grey600),
+                textAlign: TextAlign.right,
+              ),
+              Text(
+                basePrice,
+                style: AppTextStyles.body.copyWith(color: AppColor.grey600),
+                textAlign: TextAlign.left,
               ),
             ],
           ),
           SizedBox(height: 8.h),
           Row(
+            textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                quantityLabel,
-                style: AppTextStyles.body.copyWith(color: AppColor.grey600),
-              ),
-              const Spacer(),
               Text(
                 'الكمية',
                 style: AppTextStyles.body.copyWith(color: AppColor.grey600),
+                textAlign: TextAlign.right,
+              ),
+              Text(
+                quantityLabel,
+                style: AppTextStyles.body.copyWith(color: AppColor.grey600),
+                textAlign: TextAlign.left,
               ),
             ],
           ),
@@ -67,17 +76,22 @@ class OrderSummaryCard extends StatelessWidget {
           Divider(color: AppColor.grey200, height: 1.h),
           SizedBox(height: 8.h),
           Row(
+            textDirection: TextDirection.rtl,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                totalLabel,
-                style: AppTextStyles.price,
-              ),
-              const Spacer(),
               Text(
                 'الإجمالي',
                 style: AppTextStyles.body.copyWith(
                   color: AppColor.black,
                   fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.right,
+              ),
+              Text(
+                totalLabel,
+                textAlign: TextAlign.left,
+                style: AppTextStyles.price.copyWith(
+                  color: AppColor.orange900,
                 ),
               ),
             ],

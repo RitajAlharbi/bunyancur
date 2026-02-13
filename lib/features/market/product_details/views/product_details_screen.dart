@@ -24,7 +24,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    controller = ProductDetailsController(product: widget.product);
+    controller = ProductDetailsController();
+    final id = widget.product?.productId;
+    if (id != null && id.isNotEmpty) {
+      controller.load(id);
+    }
   }
 
   @override
@@ -35,28 +39,36 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final product = controller.product;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: AppColor.white,
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsetsDirectional.fromSTEB(20.w, 16.h, 20.w, 24.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) {
+              if (controller.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (controller.error != null || controller.product == null) {
+                return Center(
+                  child: Text(
+                    controller.error ?? 'تعذر تحميل تفاصيل المنتج',
+                    style: AppTextStyles.body.copyWith(
+                      color: AppColor.grey600,
+                    ),
+                  ),
+                );
+              }
+              final product = controller.product!;
+              return SingleChildScrollView(
+                padding: EdgeInsetsDirectional.fromSTEB(20.w, 16.h, 20.w, 24.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
                 SizedBox(height: 6.h),
                 Row(
                   children: [
-                    const SizedBox(width: 40),
-                    Expanded(
-                      child: Text(
-                        'تفاصيل المنتج',
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.title,
-                      ),
-                    ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
@@ -80,6 +92,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ),
                       ),
                     ),
+                    Expanded(
+                      child: Text(
+                        'تفاصيل المنتج',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.title,
+                      ),
+                    ),
+                    const SizedBox(width: 40),
                   ],
                 ),
                 SizedBox(height: 16.h),
@@ -91,10 +111,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     color: AppColor.grey100,
                     borderRadius: BorderRadius.circular(16.r),
                   ),
-                  child: Image.asset(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                  ),
+                  child: product.imageUrl.startsWith('http')
+                      ? Image.network(
+                          product.imageUrl,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          product.imageUrl,
+                          fit: BoxFit.cover,
+                        ),
                 ),
                 SizedBox(height: 16.h),
                 Container(
@@ -114,45 +139,58 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        product.title,
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.title.copyWith(
-                          color: AppColor.black,
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          product.title,
+                          textAlign: TextAlign.right,
+                          style: AppTextStyles.title.copyWith(
+                            color: AppColor.black,
+                          ),
                         ),
                       ),
                       SizedBox(height: 8.h),
-                      Container(
-                        padding: EdgeInsetsDirectional.symmetric(
-                          horizontal: 12.w,
-                          vertical: 6.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.grey100,
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                        child: Text(
-                          product.categoryLabel,
-                          style: AppTextStyles.caption12.copyWith(
-                            color: AppColor.grey600,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          padding: EdgeInsetsDirectional.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColor.grey100,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Text(
+                            product.categoryLabel,
+                            textAlign: TextAlign.right,
+                            style: AppTextStyles.caption12.copyWith(
+                              color: AppColor.grey600,
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(height: 12.h),
-                      Text(
-                        'الوصف',
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColor.grey600,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          'الوصف',
+                          textAlign: TextAlign.right,
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColor.grey600,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       SizedBox(height: 6.h),
-                      Text(
-                        product.description,
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColor.grey600,
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          product.description,
+                          textAlign: TextAlign.right,
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColor.grey600,
+                          ),
                         ),
                       ),
                       SizedBox(height: 12.h),
@@ -172,14 +210,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            product.priceLabel,
-                            style: AppTextStyles.price,
-                          ),
-                          Text(
                             'السعر',
                             style: AppTextStyles.body.copyWith(
                               color: AppColor.grey600,
                             ),
+                          ),
+                          Text(
+                            product.priceLabel,
+                            style: AppTextStyles.price,
                           ),
                         ],
                       ),
@@ -209,40 +247,46 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        'البائع',
-                        textAlign: TextAlign.right,
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColor.grey600,
-                          fontWeight: FontWeight.bold,
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          'البائع',
+                          textAlign: TextAlign.right,
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColor.grey600,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          CircleAvatar(
-                            radius: 20.r,
-                            backgroundImage: AssetImage(product.sellerAvatar),
+                          Builder(
+                            builder: (context) {
+                              final avatarPath = product.sellerAvatar;
+                              final avatarIsRemote = avatarPath.startsWith('http');
+                              return CircleAvatar(
+                                radius: 20.r,
+                                backgroundImage: avatarIsRemote
+                                    ? NetworkImage(avatarPath)
+                                    : AssetImage(avatarPath) as ImageProvider,
+                              );
+                            },
                           ),
                           SizedBox(width: 12.w),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text(
-                                  product.sellerName,
-                                  textAlign: TextAlign.right,
-                                  style: AppTextStyles.body.copyWith(
-                                    color: AppColor.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4.h),
-                                Text(
-                                  product.sellerRole,
-                                  textAlign: TextAlign.right,
-                                  style: AppTextStyles.caption12.copyWith(
-                                    color: AppColor.grey600,
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Text(
+                                    product.sellerDisplayName,
+                                    textAlign: TextAlign.right,
+                                    style: AppTextStyles.body.copyWith(
+                                      color: AppColor.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -263,9 +307,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             context,
                             Routes.purchaseProduct,
                             arguments: PurchaseProductModel(
+                              productId: product.productId,
                               title: product.title,
                               priceLabel: product.priceLabel,
-                              sellerName: product.sellerName,
+                              sellerName: product.sellerDisplayName,
                               imageUrl: product.imageUrl,
                               rating: 4.8,
                             ),
@@ -342,8 +387,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   ),
                 ),
-              ],
-            ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),

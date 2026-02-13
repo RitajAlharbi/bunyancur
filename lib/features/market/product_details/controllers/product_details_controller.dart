@@ -1,22 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../data/market_repository.dart';
 import '../models/product_details_model.dart';
 
 class ProductDetailsController extends ChangeNotifier {
-  final ProductDetailsModel product;
+  final MarketRepository _repository;
+  ProductDetailsModel? product;
+  List<String> imageUrls = [];
+  List<Map<String, dynamic>> reviews = [];
+  bool isLoading = false;
+  String? error;
 
-  ProductDetailsController({ProductDetailsModel? product})
-      : product = product ??
-            const ProductDetailsModel(
-              title: 'سقالات كورية متكاملة',
-              categoryLabel: 'سقالات',
-              description:
-                  'سقالات كورية متكاملة بجودة عالية وسهولة في التركيب، مناسبة لجميع أنواع المشاريع الإنشائية.',
-              quantityLabel: '10 قطع',
-              city: 'الرياض',
-              priceLabel: '300 ريال',
-              imageUrl: 'assets/images/ImageWithFallback2.png',
-              sellerName: 'محمد خالد',
-              sellerRole: 'مقاول معتمد',
-              sellerAvatar: 'assets/icons/avatar.png',
-            );
+  ProductDetailsController({MarketRepository? repository})
+      : _repository = repository ?? MarketRepository();
+
+  Future<void> load(String productId) async {
+    isLoading = true;
+    error = null;
+    product = null;
+    notifyListeners();
+
+    try {
+      final details = await _repository.fetchProductDetails(productId);
+      if (details != null) {
+        final rawSellerName = (details['profiles']?['full_name'] as String?)?.trim();
+        // ignore: avoid_print
+        print(
+          'Product details debug -> stock_qty: ${details['stock_qty']}, seller_id: ${details['seller_id']}, seller_full_name: $rawSellerName',
+        );
+
+        product = ProductDetailsModel.fromJson(
+          details,
+          fallbackProductId: productId,
+          fallbackImageUrl: 'assets/images/ImageWithFallback2.png',
+          fallbackSellerAvatar: 'assets/icons/avatar.png',
+        );
+        imageUrls = product!.imageUrls;
+      } else {
+        error = 'تعذر تحميل تفاصيل المنتج';
+      }
+
+      reviews = await _repository.fetchReviews(productId);
+    } on PostgrestException catch (e) {
+      // ignore: avoid_print
+      print('PostgrestException details: ${e.details}');
+      // ignore: avoid_print
+      print('PostgrestException hint: ${e.hint}');
+      error = '${e.code} - ${e.message}';
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

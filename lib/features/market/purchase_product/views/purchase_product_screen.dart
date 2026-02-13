@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/routing/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../controllers/purchase_product_controller.dart';
@@ -53,14 +54,6 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        const SizedBox(width: 40),
-                        Expanded(
-                          child: Text(
-                            'شراء المنتج',
-                            textAlign: TextAlign.center,
-                            style: AppTextStyles.title.copyWith(fontSize: 22.sp),
-                          ),
-                        ),
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
                           child: Container(
@@ -84,13 +77,21 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                             ),
                           ),
                         ),
+                        Expanded(
+                          child: Text(
+                            'شراء المنتج',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.title.copyWith(fontSize: 22.sp),
+                          ),
+                        ),
+                        const SizedBox(width: 40),
                       ],
                     ),
                     SizedBox(height: 12.h),
                     PurchaseProductCard(product: controller.product),
                     SizedBox(height: 16.h),
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
+                    SizedBox(
+                      width: double.infinity,
                       child: Text(
                         'أدخل تفاصيل الطلب لإتمام عملية الشراء',
                         textAlign: TextAlign.right,
@@ -100,8 +101,8 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                       ),
                     ),
                     SizedBox(height: 12.h),
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
+                    SizedBox(
+                      width: double.infinity,
                       child: Text(
                         'الكمية المطلوبة',
                         textAlign: TextAlign.right,
@@ -117,8 +118,8 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                       hintText: 'أدخل الكمية التي ترغب بشرائها',
                     ),
                     SizedBox(height: 16.h),
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
+                    SizedBox(
+                      width: double.infinity,
                       child: Text(
                         'طريقة الاستلام',
                         textAlign: TextAlign.right,
@@ -136,27 +137,16 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                       onChanged: controller.selectDeliveryMethod,
                     ),
                     SizedBox(height: 16.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          '(اختياري)',
-                          textAlign: TextAlign.right,
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColor.grey400,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'موقع التسليم',
+                        textAlign: TextAlign.right,
+                        style: AppTextStyles.body.copyWith(
+                          color: AppColor.black,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(width: 6.w),
-                        Text(
-                          'موقع التسليم',
-                          textAlign: TextAlign.right,
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColor.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                     SizedBox(height: 8.h),
                     PurchaseTextField(
@@ -164,27 +154,27 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                       hintText: 'المدينة أو الموقع التقريبي',
                     ),
                     SizedBox(height: 16.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          '(اختياري)',
-                          textAlign: TextAlign.right,
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColor.grey400,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(width: 6.w),
-                        Text(
-                          'ملاحظات إضافية',
-                          textAlign: TextAlign.right,
+                    SizedBox(
+                      width: double.infinity,
+                      child: RichText(
+                        textAlign: TextAlign.right,
+                        text: TextSpan(
                           style: AppTextStyles.body.copyWith(
                             color: AppColor.black,
                             fontWeight: FontWeight.bold,
                           ),
+                          children: [
+                            const TextSpan(text: 'ملاحظات إضافية '),
+                            TextSpan(
+                              text: '(اختياري)',
+                              style: AppTextStyles.body.copyWith(
+                                color: AppColor.grey400,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                     SizedBox(height: 8.h),
                     PurchaseTextField(
@@ -193,8 +183,8 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                       maxLines: 3,
                     ),
                     SizedBox(height: 20.h),
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
+                    SizedBox(
+                      width: double.infinity,
                       child: Text(
                         'طريقة الدفع',
                         textAlign: TextAlign.right,
@@ -242,20 +232,69 @@ class _PurchaseProductScreenState extends State<PurchaseProductScreen> {
                       width: double.infinity,
                       height: 56.h,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: controller.isSubmitting
+                            ? null
+                            : controller.canConfirmPurchase
+                            ? () async {
+                                final error = controller.validateBeforePurchase();
+                                if (error != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(error),
+                                      backgroundColor: AppColor.orange900,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                final orderData = await controller.submitOrder();
+                                if (!context.mounted) return;
+                                if (orderData == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('تعذر إنشاء الطلب حالياً'),
+                                      backgroundColor: AppColor.orange900,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.orderSuccess,
+                                  arguments: orderData,
+                                );
+                              }
+                            : () {
+                                final error = controller.validateBeforePurchase();
+                                if (error == null) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(error),
+                                    backgroundColor: AppColor.orange900,
+                                  ),
+                                );
+                              },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColor.orange900,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24.r),
                           ),
                         ),
-                        child: Text(
-                          'تأكيد الشراء',
-                          style: AppTextStyles.body.copyWith(
-                            color: AppColor.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: controller.isSubmitting
+                            ? SizedBox(
+                                width: 20.w,
+                                height: 20.h,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColor.white,
+                                ),
+                              )
+                            : Text(
+                                'تأكيد الشراء',
+                                style: AppTextStyles.body.copyWith(
+                                  color: AppColor.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                     SizedBox(height: 12.h),

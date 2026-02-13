@@ -29,10 +29,8 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
     super.initState();
     controller = CreateProjectController();
     controller.loadProjectTypes('contractor');
-    nameController =
-        TextEditingController(text: controller.data.title);
-    descriptionController =
-        TextEditingController(text: controller.data.description);
+    nameController = TextEditingController(text: controller.data.title);
+    descriptionController = TextEditingController(text: controller.data.description);
   }
 
   @override
@@ -63,7 +61,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CreateProjectHeader(title: 'إنشاء مشروع جديد'),
+                    const CreateProjectHeader(title: 'إنشاء مشروع جديد'),
                     SizedBox(height: 12.h),
                     const CreateProjectProgressIndicator(
                       totalSteps: 4,

@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import '../data/market_repository.dart';
 import '../models/product_model.dart';
 
 enum SortOption { newest, priceLowHigh, priceHighLow, ratingHigh }
@@ -19,62 +21,33 @@ extension SortOptionX on SortOption {
 }
 
 class MarketController extends ChangeNotifier {
-  String selectedCategory = 'الكل';
+  final MarketRepository _repository;
+
+  MarketController({MarketRepository? repository})
+      : _repository = repository ?? MarketRepository();
+
+  static const String allCategoryId = '__all__';
+
+  List<MarketCategoryItem> categories = const [
+    MarketCategoryItem(id: allCategoryId, label: 'الكل'),
+  ];
+  String selectedCategoryId = allCategoryId;
   String searchQuery = '';
   SortOption sortOption = SortOption.newest;
   double? minPrice;
   double? maxPrice;
   double minRating = 0;
+  bool isLoading = false;
+  String? error;
 
-  final List<ProductModel> allProducts = [
-    const ProductModel(
-      id: '1',
-      title: 'حديد تسليح عالي الجودة',
-      sellerName: 'أحمد العتيبي',
-      price: 450,
-      rating: 4.6,
-       imageUrl: 'assets/images/ImageWithFallback3.png',
-      category: ProductCategory.iron,
-      isFavorite: false,
-    ),
-    const ProductModel(
-      id: '2',
-      title: 'سقالات كورية متكاملة',
-      sellerName: 'محمد خالد',
-      price: 300,
-      rating: 4.2,
-       imageUrl: 'assets/images/ImageWithFallback.png',
-      category: ProductCategory.other,
-      isFavorite: false,
-    ),
-    const ProductModel(
-      id: '3',
-      title: 'بلاط أرضيات فاخر',
-      sellerName: 'فيصل القحطاني',
-      price: 180,
-      rating: 4.8,
-     imageUrl: 'assets/images/ImageWithFallback2.png',
-      category: ProductCategory.tile,
-      isFavorite: false,
-    ),
-    const ProductModel(
-      id: '4',
-      title: 'خشب بناء ممتاز',
-      sellerName: 'سعد الهادي',
-      price: 280,
-      rating: 3.9,
-      imageUrl: 'assets/images/ImageWithFallback4.png',
-      category: ProductCategory.wood,
-      isFavorite: false,
-    ),
-  ];
+  List<ProductModel> products = [];
 
   List<ProductModel> get filteredProducts {
     final query = searchQuery.trim().toLowerCase();
-    final results = allProducts.where((product) {
-      final matchesCategory = selectedCategory == 'الكل'
+    final results = products.where((product) {
+      final matchesCategory = selectedCategoryId == allCategoryId
           ? true
-          : product.category.labelAr == selectedCategory;
+          : product.categoryId == selectedCategoryId;
       final matchesQuery = query.isEmpty
           ? true
           : product.title.toLowerCase().contains(query) ||
@@ -107,10 +80,148 @@ class MarketController extends ChangeNotifier {
     }
   }
 
-  void selectCategory(String category) {
-    if (selectedCategory == category) return;
-    selectedCategory = category;
+  Future<void> init() async {
+    isLoading = true;
+    error = null;
     notifyListeners();
+    await Future.wait([_loadCategories(), _loadProducts()]);
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final rows = await _repository.fetchCategories();
+      final fetched = rows.map((row) {
+        final id = row['id']?.toString() ?? '';
+        final label = (row['name_ar'] ?? row['name'] ?? row['title'] ?? '').toString();
+        return MarketCategoryItem(id: id, label: label);
+      }).where((item) => item.id.isNotEmpty && item.label.isNotEmpty).toList();
+      categories = [
+        const MarketCategoryItem(id: allCategoryId, label: 'الكل'),
+        ...fetched,
+      ];
+    } catch (_) {
+      categories = const [MarketCategoryItem(id: allCategoryId, label: 'الكل')];
+    }
+  }
+
+  Future<void> _loadProducts() async {
+    try {
+      error = null;
+      final rows = await _repository.fetchProducts(
+        categoryId: selectedCategoryId == allCategoryId ? null : selectedCategoryId,
+        search: searchQuery,
+      );
+      products = await Future.wait(rows.map(_mapProduct));
+    } catch (e) {
+      error = e.toString();
+      products = [];
+    }
+  }
+
+  Future<ProductModel> _mapProduct(Map<String, dynamic> row) async {
+    final productId = row['id']?.toString() ?? '';
+    final images = (row['market_product_images'] as List<dynamic>? ?? const [])
+        .map((item) => Map<String, dynamic>.from(item as Map))
+        .toList()
+      ..sort((a, b) =>
+          (a['sort_order'] as num? ?? 0).compareTo(b['sort_order'] as num? ?? 0));
+    final imageUrl = images.isNotEmpty
+        ? (images.first['image_url']?.toString() ?? '')
+        : '';
+
+    bool favorite = false;
+    if (productId.isNotEmpty) {
+      favorite = await _repository.isFavorite(productId);
+    }
+
+    final categoryId = row['category_id']?.toString();
+    final sellerName = (row['seller_full_name'] as String?)?.trim();
+    return ProductModel(
+      id: productId,
+      title: (row['title'] ?? '').toString(),
+      description: (row['description'] ?? '').toString(),
+      stockQty: (row['stock_qty'] as num?)?.toInt() ?? 0,
+      sellerName: (sellerName == null || sellerName.isEmpty)
+          ? 'غير متوفر'
+          : sellerName,
+      price: (row['price'] as num?)?.toDouble() ?? 0,
+      rating: (row['rating_avg'] as num?)?.toDouble() ?? 0,
+      imageUrl: imageUrl.isNotEmpty ? imageUrl : 'assets/images/ImageWithFallback.png',
+      category: _mapCategoryFromName((row['category_name'] ?? '').toString()),
+      categoryId: categoryId,
+      city: (row['city'] ?? '').toString(),
+      currency: (row['currency'] ?? 'SAR').toString(),
+      status: (row['status'] ?? '').toString(),
+      sellerId: (row['seller_id'] ?? '').toString(),
+      isFavorite: favorite,
+    );
+  }
+
+  ProductCategory _mapCategoryFromName(String value) {
+    if (value.contains('حديد')) return ProductCategory.iron;
+    if (value.contains('خشب')) return ProductCategory.wood;
+    if (value.contains('بلاط') || value.contains('سيراميك')) return ProductCategory.tile;
+    return ProductCategory.other;
+  }
+
+  Future<void> setCategory(String id) async {
+    if (selectedCategoryId == id) return;
+    selectedCategoryId = id;
+    isLoading = true;
+    notifyListeners();
+    await _loadProducts();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> setSearch(String text) async {
+    searchQuery = text;
+    isLoading = true;
+    notifyListeners();
+    await _loadProducts();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> refresh() async {
+    isLoading = true;
+    notifyListeners();
+    await _loadProducts();
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> toggleFavorite(String productId) async {
+    final index = products.indexWhere((product) => product.id == productId);
+    if (index == -1) return;
+    final current = products[index];
+    final makeFavorite = !current.isFavorite;
+    products[index] = current.copyWith(isFavorite: makeFavorite);
+    notifyListeners();
+    try {
+      await _repository.toggleFavorite(productId, makeFavorite);
+    } catch (_) {
+      products[index] = current;
+      notifyListeners();
+    }
+  }
+
+  String get selectedCategory {
+    for (final item in categories) {
+      if (item.id == selectedCategoryId) return item.label;
+    }
+    return 'الكل';
+  }
+
+  void selectCategory(String category) {
+    for (final item in categories) {
+      if (item.label == category) {
+        unawaited(setCategory(item.id));
+        return;
+      }
+    }
   }
 
   void setSortOption(SortOption option) {
@@ -157,15 +268,16 @@ class MarketController extends ChangeNotifier {
   }
 
   void updateSearch(String value) {
-    searchQuery = value;
-    notifyListeners();
+    unawaited(setSearch(value));
   }
+}
 
-  void toggleFavorite(String productId) {
-    final index = allProducts.indexWhere((product) => product.id == productId);
-    if (index == -1) return;
-    final current = allProducts[index];
-    allProducts[index] = current.copyWith(isFavorite: !current.isFavorite);
-    notifyListeners();
-  }
+class MarketCategoryItem {
+  final String id;
+  final String label;
+
+  const MarketCategoryItem({
+    required this.id,
+    required this.label,
+  });
 }

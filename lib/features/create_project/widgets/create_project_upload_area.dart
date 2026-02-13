@@ -9,8 +9,8 @@ class CreateProjectUploadArea extends StatelessWidget {
   final String actionText;
   final String allowedTypesText;
   final bool isEmpty;
-  final Widget? content;
   final VoidCallback onTap;
+  final Widget content;
 
   const CreateProjectUploadArea({
     super.key,
@@ -20,111 +20,84 @@ class CreateProjectUploadArea extends StatelessWidget {
     required this.allowedTypesText,
     required this.isEmpty,
     required this.onTap,
-    this.content,
+    required this.content,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 28.w,
-              height: 28.w,
-              decoration: BoxDecoration(
-                color: AppColor.orange900.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8.r),
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: AppColor.grey100,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: AppColor.grey200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(titleIcon, color: AppColor.orange900, size: 18.sp),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.right,
+                  style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+                ),
               ),
-              child: Icon(
-                titleIcon,
-                color: AppColor.orange900,
-                size: 18.sp,
-              ),
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.right,
-                style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10.h),
-        Material(
-          color: AppColor.grey100,
-          borderRadius: BorderRadius.circular(20.r),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(20.r),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(color: AppColor.grey200),
-              ),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: isEmpty
-                    ? _UploadPlaceholder(
-                        actionText: actionText,
-                        allowedTypesText: allowedTypesText,
-                      )
-                    : content ?? const SizedBox.shrink(),
-              ),
-            ),
+            ],
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class _UploadPlaceholder extends StatelessWidget {
-  final String actionText;
-  final String allowedTypesText;
-
-  const _UploadPlaceholder({
-    required this.actionText,
-    required this.allowedTypesText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      key: const ValueKey('upload-placeholder'),
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 44.w,
-          height: 44.w,
-          decoration: BoxDecoration(
-            color: AppColor.grey200,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.file_upload_outlined,
-            color: AppColor.grey500,
-            size: 22.sp,
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Text(
-          actionText,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.body,
-        ),
-        SizedBox(height: 4.h),
-        Text(
-          allowedTypesText,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.caption12,
-        ),
-      ],
+          SizedBox(height: 10.h),
+          if (isEmpty)
+            InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(14.r),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 16.h),
+                decoration: BoxDecoration(
+                  color: AppColor.white,
+                  borderRadius: BorderRadius.circular(14.r),
+                  border: Border.all(color: AppColor.grey200),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      actionText,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.body,
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      allowedTypesText,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.caption12,
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            Column(
+              children: [
+                content,
+                SizedBox(height: 10.h),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: onTap,
+                    child: Text(
+                      actionText,
+                      style: AppTextStyles.caption12.copyWith(
+                        color: AppColor.orange900,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 }

@@ -15,6 +15,8 @@ class CreateProjectFormData {
   final String expectedDuration;
   final List<String> selectedProviderIds;
   final List<String> uploadedImageUrls;
+  @Deprecated('Legacy compatibility for designer/client flow')
+  final int? customBudgetAmount;
 
   static const Object _unset = Object();
 
@@ -33,6 +35,7 @@ class CreateProjectFormData {
     this.expectedDuration = '',
     this.selectedProviderIds = const <String>[],
     this.uploadedImageUrls = const <String>[],
+    this.customBudgetAmount,
   });
 
   CreateProjectFormData copyWith({
@@ -50,26 +53,41 @@ class CreateProjectFormData {
     String? expectedDuration,
     List<String>? selectedProviderIds,
     List<String>? uploadedImageUrls,
+    Object? customBudgetAmount = _unset,
+    @Deprecated('Legacy alias') String? projectName,
+    @Deprecated('Legacy alias') String? projectType,
+    @Deprecated('Legacy alias') String? projectArea,
+    @Deprecated('Legacy alias') String? projectDescription,
+    @Deprecated('Legacy alias') String? timeline,
   }) {
+    final resolvedTitle = title ?? projectName;
+    final resolvedProjectTypeName = projectTypeName ?? projectType;
+    final resolvedAreaRange = areaRange ?? projectArea;
+    final resolvedDescription = description ?? projectDescription;
+    final resolvedDuration = expectedDuration ?? timeline;
+
     return CreateProjectFormData(
-      title: title ?? this.title,
+      title: resolvedTitle ?? this.title,
       projectTypeId: projectTypeId ?? this.projectTypeId,
-      projectTypeName: projectTypeName ?? this.projectTypeName,
-      areaRange: areaRange ?? this.areaRange,
-      description: description ?? this.description,
+      projectTypeName: resolvedProjectTypeName ?? this.projectTypeName,
+      areaRange: resolvedAreaRange ?? this.areaRange,
+      description: resolvedDescription ?? this.description,
       city: city ?? this.city,
       district: district ?? this.district,
       address: address ?? this.address,
       latitude: latitude == _unset ? this.latitude : latitude as double?,
       longitude: longitude == _unset ? this.longitude : longitude as double?,
       budgetRange: budgetRange ?? this.budgetRange,
-      expectedDuration: expectedDuration ?? this.expectedDuration,
+      expectedDuration: resolvedDuration ?? this.expectedDuration,
       selectedProviderIds: List<String>.unmodifiable(
         selectedProviderIds ?? this.selectedProviderIds,
       ),
       uploadedImageUrls: List<String>.unmodifiable(
         uploadedImageUrls ?? this.uploadedImageUrls,
       ),
+      customBudgetAmount: customBudgetAmount == _unset
+          ? this.customBudgetAmount
+          : customBudgetAmount as int?,
     );
   }
 
@@ -95,4 +113,16 @@ class CreateProjectFormData {
       budgetRange.trim().isNotEmpty && expectedDuration.trim().isNotEmpty;
 
   bool get isReadyToSubmit => isStep1Valid && isLocationValid && isBudgetValid;
+
+  // Legacy aliases to keep older create_designer/client screens compiling.
+  @Deprecated('Use title')
+  String get projectName => title;
+  @Deprecated('Use projectTypeName')
+  String? get projectType => projectTypeName.isEmpty ? null : projectTypeName;
+  @Deprecated('Use areaRange')
+  String? get projectArea => areaRange.isEmpty ? null : areaRange;
+  @Deprecated('Use description')
+  String get projectDescription => description;
+  @Deprecated('Use expectedDuration')
+  String? get timeline => expectedDuration.isEmpty ? null : expectedDuration;
 }

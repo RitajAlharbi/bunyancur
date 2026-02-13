@@ -26,8 +26,7 @@ class CreateProjectLocationScreen extends StatefulWidget {
       _CreateProjectLocationScreenState();
 }
 
-class _CreateProjectLocationScreenState
-    extends State<CreateProjectLocationScreen> {
+class _CreateProjectLocationScreenState extends State<CreateProjectLocationScreen> {
   late final TextEditingController addressController;
   late final TextEditingController cityController;
   late final TextEditingController districtController;
@@ -202,8 +201,7 @@ class _CreateProjectLocationScreenState
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) =>
-                                            CreateProjectBudgetTimelineScreen(
+                                        builder: (_) => CreateProjectBudgetTimelineScreen(
                                           controller: widget.controller,
                                         ),
                                       ),

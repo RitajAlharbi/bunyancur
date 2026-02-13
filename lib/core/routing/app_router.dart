@@ -14,10 +14,12 @@ import '../../features/market/product_details/views/product_details_screen.dart'
 import '../../features/market/product_details/models/product_details_model.dart';
 import '../../features/market/purchase_product/views/purchase_product_screen.dart';
 import '../../features/market/purchase_product/models/purchase_product_model.dart';
+import '../../features/market/order_success/views/order_success_screen.dart';
+import '../../features/market/order_success/models/order_success_vm.dart';
+import '../../features/market/product_review/views/product_review_screen.dart';
+import '../../features/market/product_review/models/product_review_vm.dart';
 import '../../features/admin/views/admin_login_screen.dart';
 import '../../features/admin/views/admin_dashboard_screen.dart';
-import '../../features/auth/views/login_screen.dart';
-import '../../features/roles/models/role_type.dart';
 import '../../features/client_orders/view/client_orders_screen.dart';
 import '../../features/profile/view/profile_settings_screen.dart';
 import '../../features/auth/view/login_screen.dart';
@@ -57,6 +59,12 @@ class AppRouter {
       case Routes.purchaseProduct:
         final product = settings.arguments as PurchaseProductModel;
         return _createRoute(PurchaseProductScreen(product: product));
+      case Routes.orderSuccess:
+        final order = settings.arguments as OrderSuccessVm?;
+        return _createRoute(OrderSuccessScreen(order: order));
+      case Routes.productReview:
+        final product = settings.arguments as ProductReviewVm;
+        return _createRoute(ProductReviewScreen(product: product));
       case Routes.messagesScreen:
         return _createRoute(const MessagesScreen());
       case Routes.chatScreen: {
@@ -82,10 +90,6 @@ class AppRouter {
         return _createRoute(const SignupScreen());
       case Routes.forgotPassword:
         return _createRoute(const ForgotPasswordScreen());
-
-      case Routes.loginScreen:
-        final role = settings.arguments as RoleType?;
-        return _createRoute(LoginScreen(role: role));
 
       case Routes.adminLogin:
         return _createRoute(const AdminLoginScreen());

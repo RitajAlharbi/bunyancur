@@ -11,7 +11,6 @@ import '../widgets/create_project_progress_indicator.dart';
 import '../widgets/create_project_summary_row.dart';
 import '../widgets/create_project_upload_area.dart';
 
-/// Step 4 of the Interior Designer (المصمم الداخلي) project creation flow — upload & summary.
 class CreateDesignerProjectUploadSummaryScreen extends StatelessWidget {
   final CreateDesignerProjectController controller;
 
@@ -54,7 +53,7 @@ class CreateDesignerProjectUploadSummaryScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      'أضف صور وملفات تساعد المصممين الداخليين على فهم متطلباتك',
+                      'أضف صور وملفات تساعد المصمم الداخلي على فهم متطلباتك',
                       textAlign: TextAlign.right,
                       style: AppTextStyles.caption12,
                     ),
@@ -85,12 +84,6 @@ class CreateDesignerProjectUploadSummaryScreen extends StatelessWidget {
                       label: 'إنشاء المشروع',
                       onPressed: controller.isStep4Valid ? () {} : null,
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      'بإنشاء المشروع، أنت توافق على شروط وأحكام المنصة',
-                      textAlign: TextAlign.center,
-                      style: AppTextStyles.caption12,
-                    ),
                   ],
                 ),
               );
@@ -104,16 +97,12 @@ class CreateDesignerProjectUploadSummaryScreen extends StatelessWidget {
 
 class _SelectedImagesGrid extends StatelessWidget {
   final CreateDesignerProjectController controller;
-
   const _SelectedImagesGrid({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    if (controller.projectImages.isEmpty) {
-      return const SizedBox.shrink(key: ValueKey('empty-images'));
-    }
+    if (controller.projectImages.isEmpty) return const SizedBox.shrink();
     return Wrap(
-      key: const ValueKey('images-grid'),
       spacing: 8.w,
       runSpacing: 8.h,
       children: List.generate(controller.projectImages.length, (index) {
@@ -130,11 +119,7 @@ class _SelectedImagesGrid extends StatelessWidget {
 class _UploadThumbnail extends StatelessWidget {
   final String imagePath;
   final VoidCallback onRemove;
-
-  const _UploadThumbnail({
-    required this.imagePath,
-    required this.onRemove,
-  });
+  const _UploadThumbnail({required this.imagePath, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -145,11 +130,7 @@ class _UploadThumbnail extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(12.r),
-          child: SizedBox(
-            width: 72.w,
-            height: 72.w,
-            child: image,
-          ),
+          child: SizedBox(width: 72.w, height: 72.w, child: image),
         ),
         Positioned(
           top: 4.h,
@@ -164,11 +145,7 @@ class _UploadThumbnail extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: AppColor.grey200),
               ),
-              child: Icon(
-                Icons.close,
-                size: 12.sp,
-                color: AppColor.grey700,
-              ),
+              child: Icon(Icons.close, size: 12.sp, color: AppColor.grey700),
             ),
           ),
         ),
@@ -179,23 +156,39 @@ class _UploadThumbnail extends StatelessWidget {
 
 class _SelectedFilesList extends StatelessWidget {
   final CreateDesignerProjectController controller;
-
   const _SelectedFilesList({required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    if (controller.projectFiles.isEmpty) {
-      return const SizedBox.shrink(key: ValueKey('empty-files'));
-    }
+    if (controller.projectFiles.isEmpty) return const SizedBox.shrink();
     return Column(
-      key: const ValueKey('files-list'),
       children: List.generate(controller.projectFiles.length, (index) {
         final file = controller.projectFiles[index];
         return Padding(
           padding: EdgeInsets.only(bottom: 8.h),
-          child: _UploadFileRow(
-            fileName: file.name,
-            onRemove: () => controller.removeProjectFileAt(index),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () => controller.removeProjectFileAt(index),
+                child: Container(
+                  width: 24.w,
+                  height: 24.w,
+                  decoration: const BoxDecoration(
+                    color: AppColor.grey200,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.close, size: 14.sp, color: AppColor.grey700),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Text(
+                  file.name,
+                  textAlign: TextAlign.right,
+                  style: AppTextStyles.body,
+                ),
+              ),
+            ],
           ),
         );
       }),
@@ -203,56 +196,8 @@ class _SelectedFilesList extends StatelessWidget {
   }
 }
 
-class _UploadFileRow extends StatelessWidget {
-  final String fileName;
-  final VoidCallback onRemove;
-
-  const _UploadFileRow({
-    required this.fileName,
-    required this.onRemove,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: onRemove,
-          child: Container(
-            width: 24.w,
-            height: 24.w,
-            decoration: BoxDecoration(
-              color: AppColor.grey200,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.close,
-              size: 14.sp,
-              color: AppColor.grey700,
-            ),
-          ),
-        ),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: Text(
-            fileName,
-            textAlign: TextAlign.right,
-            style: AppTextStyles.body,
-          ),
-        ),
-        Icon(
-          Icons.insert_drive_file_outlined,
-          size: 18.sp,
-          color: AppColor.orange900,
-        ),
-      ],
-    );
-  }
-}
-
 class _SummaryCard extends StatelessWidget {
   final CreateDesignerProjectController controller;
-
   const _SummaryCard({required this.controller});
 
   @override
@@ -267,20 +212,6 @@ class _SummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Icon(Icons.check_circle, color: AppColor.orange900, size: 18.sp),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Text(
-                  'ملخص المشروع',
-                  textAlign: TextAlign.right,
-                  style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
           CreateProjectSummaryRow(
             label: 'اسم المشروع:',
             value: controller.summaryProjectName,
@@ -292,23 +223,8 @@ class _SummaryCard extends StatelessWidget {
           ),
           SizedBox(height: 8.h),
           CreateProjectSummaryRow(
-            label: 'المساحة:',
-            value: controller.summaryProjectArea,
-          ),
-          SizedBox(height: 8.h),
-          CreateProjectSummaryRow(
             label: 'الموقع:',
             value: controller.summaryLocation,
-          ),
-          SizedBox(height: 8.h),
-          CreateProjectSummaryRow(
-            label: 'الميزانية:',
-            value: controller.summaryBudget,
-          ),
-          SizedBox(height: 8.h),
-          CreateProjectSummaryRow(
-            label: 'المدة:',
-            value: controller.summaryTimeline,
           ),
         ],
       ),

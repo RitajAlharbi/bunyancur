@@ -15,26 +15,23 @@ class CreateProjectSectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!isRequired) {
-      return Text(text, style: AppTextStyles.body);
-    }
-
-    return RichText(
-      text: TextSpan(
-        style: AppTextStyles.body,
-        children: [
-          TextSpan(text: text),
-          TextSpan(
-            text: ' *',
-            style: AppTextStyles.body.copyWith(
-              color: AppColor.orange900,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (isRequired)
+          Padding(
+            padding: EdgeInsets.only(left: 4.w),
+            child: Text(
+              '*',
+              style: AppTextStyles.body.copyWith(color: AppColor.orange900),
             ),
           ),
-        ],
-      ),
-      textAlign: TextAlign.right,
+        Text(
+          text,
+          textAlign: TextAlign.right,
+          style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+        ),
+      ],
     );
   }
 }

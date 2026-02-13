@@ -48,7 +48,7 @@ class _InlineDropdownFieldState extends State<InlineDropdownField>
         : AppTextStyles.body.copyWith(color: AppColor.grey400);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         GestureDetector(
           onTap: _toggleExpanded,
@@ -64,10 +64,12 @@ class _InlineDropdownFieldState extends State<InlineDropdownField>
               border: Border.all(color: AppColor.grey200),
             ),
             child: Row(
+              textDirection: TextDirection.rtl,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Align(
-                    alignment: AlignmentDirectional.topStart,
+                  child: SizedBox(
+                    width: double.infinity,
                     child: Text(
                       displayText,
                       textAlign: TextAlign.right,
@@ -120,8 +122,8 @@ class _InlineDropdownFieldState extends State<InlineDropdownField>
                                 horizontal: 16.w,
                                 vertical: 12.h,
                               ),
-                              child: Align(
-                                alignment: AlignmentDirectional.centerEnd,
+                              child: SizedBox(
+                                width: double.infinity,
                                 child: Text(
                                   item,
                                   textAlign: TextAlign.right,
