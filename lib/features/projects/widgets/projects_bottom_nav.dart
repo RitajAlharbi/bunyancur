@@ -16,6 +16,7 @@ class ProjectsBottomNav extends StatelessWidget {
     this.activeColor,
   });
 
+  /// ترتيب العرض من اليمين لليسار: الملف الشخصي ← الرسائل ← السوق ← المشاريع ← الرئيسية
   static const _items = [
     ('assets/icons/home.svg', 'الرئيسية'),
     ('assets/icons/order.svg', 'المشاريع'),
@@ -34,23 +35,27 @@ class ProjectsBottomNav extends StatelessWidget {
           height: 70.h,
           decoration: BoxDecoration(
             color: AppColor.white,
-            border: Border(
-              top: BorderSide(color: AppColor.grey200, width: 1),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24.r),
+              topRight: Radius.circular(24.r),
             ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
               _items.length,
-              (index) => Expanded(
-                child:               _NavItem(
-                  iconPath: _items[index].$1,
-                  label: _items[index].$2,
-                  isActive: currentIndex == index,
-                  activeColor: activeColor ?? AppColor.orange900,
-                  onTap: () => onTap(index),
-                ),
-              ),
+              (i) {
+                final index = _items.length - 1 - i;
+                return Expanded(
+                  child: _NavItem(
+                    iconPath: _items[index].$1,
+                    label: _items[index].$2,
+                    isActive: currentIndex == index,
+                    activeColor: activeColor ?? AppColor.orange900,
+                    onTap: () => onTap(index),
+                  ),
+                );
+              },
             ),
           ),
         ),

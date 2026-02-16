@@ -22,4 +22,17 @@ class AssetImagePaths {
     projectVilla,
     projectMajlis,
   ];
+
+  /// صور معرض الصور (خانة معرض الصور في تفاصيل المشروع)
+  static const String gallery1 = '$_projectsBase/معرض 1.jpg';
+  static const String gallery2 = '$_projectsBase/معرض2.jpg';
+  static const String gallery3 = '$_projectsBase/معرض3.jpg';
+  static const String gallery4 = '$_projectsBase/معرض4.jpg';
+
+  static const List<String> galleryImages = [
+    gallery1,
+    gallery2,
+    gallery3,
+    gallery4,
+  ];
 }

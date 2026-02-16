@@ -32,6 +32,8 @@ dependencies:
   flutter_svg:
   cupertino_icons:
   google_maps_flutter:
+  permission_handler:
+  file_picker:
 
 dev_dependencies:
   flutter_test:

@@ -14,10 +14,18 @@ class AppBottomNav extends StatelessWidget {
     required this.onTap,
   });
 
+  /// ترتيب العرض من اليمين لليسار (RTL): الملف الشخصي ← الرسائل ← السوق ← المشاريع ← الرئيسية
+  /// الفهارس: 0=الرئيسية، 1=المشاريع، 2=السوق، 3=الرسائل، 4=الملف الشخصي
+  static const _items = [
+    ('assets/icons/home.svg', 'الرئيسية'),
+    ('assets/icons/order.svg', 'المشاريع'),
+    ('assets/icons/market.svg', 'السوق'),
+    ('assets/icons/chat.svg', 'الرسائل'),
+    ('assets/icons/profile.svg', 'الملف الشخصي'),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: SafeArea(
@@ -31,46 +39,22 @@ class AppBottomNav extends StatelessWidget {
               topRight: Radius.circular(24.r),
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _NavItem(
-                    iconPath: 'assets/icons/profile.svg',
-                    label: 'الملف الشخصي',
-                    isActive: currentIndex == 4,
-                    onTap: () => onTap(4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: List.generate(
+              _items.length,
+              (i) {
+                final index = _items.length - 1 - i;
+                return Expanded(
+                  child: _NavItem(
+                    iconPath: _items[index].$1,
+                    label: _items[index].$2,
+                    isActive: currentIndex == index,
+                    onTap: () => onTap(index),
                   ),
-                  _NavItem(
-                    iconPath: 'assets/icons/chat.svg',
-                    label: 'الرسائل',
-                    isActive: currentIndex == 3,
-                    onTap: () => onTap(3),
-                  ),
-                  _NavItem(
-                    iconPath: 'assets/icons/market.svg',
-                    label: 'السوق',
-                    isActive: currentIndex == 2,
-                    onTap: () => onTap(2),
-                  ),
-                  _NavItem(
-                    iconPath: 'assets/icons/order.svg',
-                    label: 'الطلبات',
-                    isActive: currentIndex == 1,
-                    onTap: () => onTap(1),
-                  ),
-                  _NavItem(
-                    iconPath: 'assets/icons/home.svg',
-                    label: 'الرئيسية',
-                    isActive: currentIndex == 0,
-                    onTap: () => onTap(0),
-                  ),
-                ],
-              ),
-              SizedBox(height: 8.h),
-            ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -93,39 +77,54 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final baseIconColor =
-        theme.iconTheme.color ?? colorScheme.onSurface.withOpacity(0.6);
-    final inactiveColor = baseIconColor.withOpacity(0.6);
-    final activeColor = colorScheme.primary;
-    final textStyle = theme.textTheme.labelSmall ??
-        theme.textTheme.bodySmall ??
-        const TextStyle(fontSize: 10);
+    final activeColor = AppColor.orange900;
+    final inactiveColor = AppColor.grey600;
 
     return GestureDetector(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            iconPath,
-            width: 24.w,
-            height: 24.h,
-            colorFilter: ColorFilter.mode(
-              isActive ? activeColor : inactiveColor,
-              BlendMode.srcIn,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 2.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              iconPath,
+              width: 24.w,
+              height: 24.h,
+              colorFilter: ColorFilter.mode(
+                isActive ? activeColor : inactiveColor,
+                BlendMode.srcIn,
+              ),
             ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            label,
-            style: textStyle.copyWith(
-              fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
-              color: isActive ? activeColor : inactiveColor,
+            SizedBox(height: 4.h),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+                  color: isActive ? activeColor : inactiveColor,
+                  fontFamily: 'Cairo',
+                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-        ],
+            if (isActive)
+              Container(
+                margin: EdgeInsets.only(top: 4.h),
+                width: 24.w,
+                height: 2.h,
+                decoration: BoxDecoration(
+                  color: activeColor,
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

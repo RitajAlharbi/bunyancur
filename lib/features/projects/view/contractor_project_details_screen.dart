@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/project_model.dart';
 import '../controller/contractor_project_details_controller.dart';
+import 'widgets/map_preview_section.dart';
 
 class ContractorProjectDetailsScreen extends StatelessWidget {
   const ContractorProjectDetailsScreen({super.key, required this.project});
@@ -42,9 +43,9 @@ class ContractorProjectDetailsScreen extends StatelessWidget {
                                   SizedBox(height: 20.h),
                                   GalleryGrid(project: project),
                                   SizedBox(height: 20.h),
-                                  LocationPreview(
-                                    mapLocation: project.mapLocation,
-                                    imagePath: project.imagePath,
+                                  MapPreviewSection(
+                                    location: project.mapLocation,
+                                    projectImagePath: project.imagePath,
                                   ),
                                   SizedBox(height: 100.h),
                                 ],
@@ -139,7 +140,7 @@ class HeroHeader extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.arrow_forward,
+                Icons.arrow_back,
                 size: 24.sp,
                 color: AppColor.orange900,
               ),
@@ -514,69 +515,6 @@ class GalleryGrid extends StatelessWidget {
         child: Icon(Icons.image_not_supported,
             color: AppColor.grey400, size: 32.sp),
       );
-}
-
-class LocationPreview extends StatelessWidget {
-  const LocationPreview({
-    super.key,
-    this.mapLocation,
-    this.imagePath,
-  });
-
-  final String? mapLocation;
-  final String? imagePath;
-
-  static const double _radius = 20;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          'الموقع',
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w700,
-            color: AppColor.orange900,
-            fontFamily: 'Cairo',
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Container(
-          height: 180.h,
-          decoration: BoxDecoration(
-            color: AppColor.grey100,
-            borderRadius: BorderRadius.circular(_radius.r),
-            boxShadow: [
-              BoxShadow(
-                color: AppColor.black.withValues(alpha: 0.06),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-                spreadRadius: 0,
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(_radius.r),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  color: const Color(0xFFE8EAED),
-                ),
-                Icon(
-                  Icons.location_on,
-                  size: 56.sp,
-                  color: AppColor.orange900,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class PrimaryActionButton extends StatelessWidget {

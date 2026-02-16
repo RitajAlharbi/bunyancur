@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
@@ -21,11 +22,19 @@ class MapPreviewSection extends StatefulWidget {
 class _MapPreviewSectionState extends State<MapPreviewSection> {
   GoogleMapController? _mapController;
   LatLng? _location;
+  bool _locationPermissionRequested = false;
 
   @override
   void initState() {
     super.initState();
     _parseLocation();
+    _requestLocationPermission();
+  }
+
+  Future<void> _requestLocationPermission() async {
+    if (_locationPermissionRequested) return;
+    _locationPermissionRequested = true;
+    await Permission.locationWhenInUse.request();
   }
 
   void _parseLocation() {
@@ -91,7 +100,8 @@ class _MapPreviewSectionState extends State<MapPreviewSection> {
                         scrollGesturesEnabled: false,
                         tiltGesturesEnabled: false,
                         rotateGesturesEnabled: false,
-                        myLocationButtonEnabled: false,
+                        myLocationButtonEnabled: true,
+                        myLocationEnabled: true,
                         onMapCreated: (GoogleMapController controller) {
                           _mapController = controller;
                         },

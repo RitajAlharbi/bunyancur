@@ -46,6 +46,8 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>GMSApiKey</key>
-	<string>YOUR_GOOGLE_MAPS_API_KEY</string>
+	<string>AIzaSyCxfjPmA_mlWGJr43cGZf6LZZnwbHLu27o</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>يحتاج التطبيق إلى موقعك لعرض موقعك على الخريطة</string>
 </dict>
 </plist>

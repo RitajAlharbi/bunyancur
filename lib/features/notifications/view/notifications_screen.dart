@@ -70,7 +70,7 @@ class _Header extends StatelessWidget {
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: Icon(
-              Icons.arrow_forward,
+              Icons.arrow_back,
               color: AppColor.orange900,
               size: 24.sp,
             ),

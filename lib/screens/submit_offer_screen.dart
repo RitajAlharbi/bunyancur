@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../core/theme/app_colors.dart';
@@ -12,51 +13,38 @@ class SubmitOfferScreen extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: AppColor.white,
-        appBar: _buildAppBar(context),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _ProjectSummaryCard(
-                  projectName: 'ترميم منزل قديم',
-                  location: 'الخرج – حي الملز',
-                  budget: 'أكثر من 500,000 ريال',
-                  imageWidget: _buildProjectImagePlaceholder(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _Header(),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _ProjectSummaryCard(
+                        projectName: 'ترميم منزل قديم',
+                        location: 'الخرج – حي الملز',
+                        budget: 'أكثر من 500,000 ريال',
+                        imageWidget: _buildProjectImagePlaceholder(context),
+                      ),
+                      SizedBox(height: 24.h),
+                      _SectionTitle(title: 'تفاصيل العرض'),
+                      SizedBox(height: 16.h),
+                      _OfferDetailsForm(),
+                      SizedBox(height: 24.h),
+                      _AttachmentsSection(),
+                      SizedBox(height: 32.h),
+                      _SubmitButton(label: 'إرسال العرض'),
+                    ],
+                  ),
                 ),
-                SizedBox(height: 24.h),
-                _SectionTitle(title: 'تفاصيل العرض'),
-                SizedBox(height: 16.h),
-                _OfferDetailsForm(),
-                SizedBox(height: 24.h),
-                _AttachmentsSection(),
-                SizedBox(height: 32.h),
-                _SubmitButton(label: 'إرسال العرض'),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Text(
-        'تقديم عرض',
-        style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
-              color: AppColor.primaryColor,
-            ) ??
-            AppTextStyles.title,
-      ),
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_forward_ios,
-          size: 18.sp,
-          color: Theme.of(context).iconTheme.color,
-        ),
-        onPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
@@ -73,6 +61,41 @@ class SubmitOfferScreen extends StatelessWidget {
         Icons.home_rounded,
         size: 40.sp,
         color: AppColor.grey500,
+      ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppColor.orange900,
+              size: 24.sp,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              'تقديم عرض',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColor.orange900,
+                fontFamily: 'Cairo',
+              ),
+            ),
+          ),
+          SizedBox(width: 48.w),
+        ],
       ),
     );
   }
@@ -286,7 +309,60 @@ class _LabeledTextField extends StatelessWidget {
   }
 }
 
-class _AttachmentsSection extends StatelessWidget {
+/// حد أقصى لحجم الملف: 10 ميجابايت
+const int _maxFileSizeBytes = 10 * 1024 * 1024;
+
+/// امتدادات مسموحة: صور، PDF، DOC
+const List<String> _allowedExtensions = [
+  'jpg',
+  'jpeg',
+  'png',
+  'gif',
+  'webp',
+  'pdf',
+  'doc',
+  'docx',
+];
+
+class _AttachmentsSection extends StatefulWidget {
+  @override
+  State<_AttachmentsSection> createState() => _AttachmentsSectionState();
+}
+
+class _AttachmentsSectionState extends State<_AttachmentsSection> {
+  final List<PlatformFile> _files = [];
+
+  Future<void> _pickFiles() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: _allowedExtensions,
+      allowMultiple: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+    final oversize = <String>[];
+    for (final file in result.files) {
+      if (file.size > _maxFileSizeBytes) {
+        oversize.add(file.name);
+      } else {
+        setState(() => _files.add(file));
+      }
+    }
+    if (oversize.isNotEmpty && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'الملفات التالية تتجاوز 10 ميجا: ${oversize.join(", ")}',
+          ),
+          backgroundColor: AppColor.orange900,
+        ),
+      );
+    }
+  }
+
+  void _removeFile(int index) {
+    setState(() => _files.removeAt(index));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -297,51 +373,80 @@ class _AttachmentsSection extends StatelessWidget {
           style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 12.h),
-        _UploadArea(),
-      ],
-    );
-  }
-}
-
-class _UploadArea extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: AppColor.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColor.grey400,
-          width: 1.5,
+        GestureDetector(
+          onTap: _pickFiles,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 32.h, horizontal: 16.w),
+            decoration: BoxDecoration(
+              color: AppColor.white,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: AppColor.grey400,
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.cloud_upload_rounded,
+                  size: 48.sp,
+                  color: AppColor.primaryColor,
+                ),
+                SizedBox(height: 12.h),
+                Text(
+                  'اضغط لرفع ملف أو صورة',
+                  style: AppTextStyles.body.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: AppColor.grey700,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  'صور (حتى 10 ميجا) PDF, DOC',
+                  style: AppTextStyles.caption12.copyWith(
+                    color: AppColor.grey500,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.cloud_upload_rounded,
-            size: 48.sp,
-            color: AppColor.primaryColor,
-          ),
+        if (_files.isNotEmpty) ...[
           SizedBox(height: 12.h),
-          Text(
-            'اضغط لرفع ملف أو صورة',
-            style: AppTextStyles.body.copyWith(
-              fontWeight: FontWeight.w500,
-              color: AppColor.grey700,
-            ),
-          ),
-          SizedBox(height: 4.h),
-          Text(
-            'صور (حتى 10 ميجا) PDF, DOC',
-            style: AppTextStyles.caption12.copyWith(
-              color: AppColor.grey500,
-            ),
-          ),
+          ...List.generate(_files.length, (index) {
+            final file = _files[index];
+            final sizeMb = (file.size / (1024 * 1024)).toStringAsFixed(2);
+            return Padding(
+              padding: EdgeInsets.only(bottom: 8.h),
+              child: Row(
+                children: [
+                  Icon(Icons.insert_drive_file,
+                      size: 20.sp, color: AppColor.orange900),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      '${file.name} ($sizeMb ميجا)',
+                      style: AppTextStyles.caption12.copyWith(
+                        color: AppColor.grey700,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, size: 20.sp, color: AppColor.grey600),
+                    onPressed: () => _removeFile(index),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            );
+          }),
         ],
-      ),
+      ],
     );
   }
 }

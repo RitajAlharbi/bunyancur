@@ -89,7 +89,7 @@ class _Header extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(8.w),
               child: Icon(
-                Icons.arrow_forward,
+                Icons.arrow_back,
                 size: 24.sp,
                 color: AppColor.orange900,
               ),

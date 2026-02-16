@@ -81,7 +81,7 @@ class AvailableProjectsController extends ChangeNotifier {
         area: '200-300',
         duration: '6 أشهر',
         description: description,
-        galleryImagePaths: AssetImagePaths.projectImages,
+        galleryImagePaths: AssetImagePaths.galleryImages,
         mapLocation: null,
       ),
       ProjectModel(
@@ -97,7 +97,7 @@ class AvailableProjectsController extends ChangeNotifier {
         area: '400-500',
         duration: 'أكثر من سنة',
         description: description,
-        galleryImagePaths: AssetImagePaths.projectImages,
+        galleryImagePaths: AssetImagePaths.galleryImages,
         mapLocation: null,
       ),
       ProjectModel(
@@ -113,7 +113,7 @@ class AvailableProjectsController extends ChangeNotifier {
         area: '300-400',
         duration: 'سنة',
         description: description,
-        galleryImagePaths: AssetImagePaths.projectImages,
+        galleryImagePaths: AssetImagePaths.galleryImages,
         mapLocation: null,
       ),
       ProjectModel(
@@ -129,7 +129,7 @@ class AvailableProjectsController extends ChangeNotifier {
         area: '150-200',
         duration: '8 أشهر',
         description: description,
-        galleryImagePaths: AssetImagePaths.projectImages,
+        galleryImagePaths: AssetImagePaths.galleryImages,
         mapLocation: null,
       ),
     ]);

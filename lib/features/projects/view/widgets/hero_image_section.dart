@@ -53,7 +53,7 @@ class HeroImageSection extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.arrow_forward,
+                Icons.arrow_back,
                 size: 24.sp,
                 color: AppColor.orange900,
               ),
